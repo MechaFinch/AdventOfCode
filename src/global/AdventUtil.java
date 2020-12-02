@@ -15,6 +15,9 @@ import java.util.stream.Stream;
  * @author Mechafinch
  */
 public class AdventUtil {
+	
+	public static File DEFAULT = new File("input.txt");
+	
 	/**
 	 * Reads the input file as an arraylist of strings
 	 * 
