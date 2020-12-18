@@ -2,6 +2,7 @@ package year2020;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import global.AdventUtil;
 
@@ -18,50 +19,11 @@ public class Day18 {
 	 * @return
 	 */
 	public static long part2(String[] input) {
-		long sum = 0;
+		HashMap<Integer, String> pmap = new HashMap<>();
+		pmap.put(0, "\\+");
+		pmap.put(1, "\\*");
 		
-		// Each line
-		for(String s : input) sum += eval2(s);
-		
-		return sum;
-	}
-	
-	/**
-	 * Recursive evaluator (part 2)
-	 * 
-	 * @param line
-	 * @return
-	 */
-	public static long eval2(String line) {
-		ArrayList<String> tokens = tokenize(line);
-		
-		// Deal with single tokens
-		if(tokens.size() == 1) {
-			String t = tokens.get(0);
-			
-			// Evaluate the inside of parens
-			if(t.startsWith("(")) return eval2(t.substring(1, t.length() - 1));
-			return Integer.parseInt(t); // Otherwise its a number
-		}
-		
-		// Addition Pass
-		for(int i = 1; i < tokens.size() - 1; i += 2) {
-			// Replace the set of 3 tokens with the result
-			if(tokens.get(i).equals("+")) {
-				tokens.set(i - 1, Long.toString(eval2(tokens.get(i - 1)) + eval2(tokens.get(i + 1))));
-				tokens.remove(i); // Remove consumed values
-				tokens.remove(i);
-				i -= 2;
-			}
-		}
-		
-		// Multiplication pass
-		long accumulator = eval2(tokens.get(0));
-		for(int i = 2; i < tokens.size(); i += 2) {
-			accumulator *= eval2(tokens.get(i)); 
-		}
-		
-		return accumulator;
+		return solve(input, pmap);
 	}
 	
 	/**
@@ -71,44 +33,74 @@ public class Day18 {
 	 * @return
 	 */
 	public static long part1(String[] input) {
+		HashMap<Integer, String> pmap = new HashMap<>();
+		pmap.put(0, "\\+|\\*");
+		
+		return solve(input, pmap);
+	}
+	
+	/**
+	 * General solution
+	 * 
+	 * @param input
+	 * @param precedence
+	 * @return
+	 */
+	public static long solve(String[] input, HashMap<Integer, String> precedence) {
 		long sum = 0;
 		
 		// Each line
-		for(String s : input) sum += eval1(s);
+		for(String s : input) sum += eval(s, precedence);
 		
 		return sum;
 	}
 	
 	/**
-	 * Recursive evaluator (part 1)
+	 * Recursive evaluator (general)
 	 * 
 	 * @param line
+	 * @param precedence Map of precedence to regex matching the operators, evaluated 0, 1, 2, etc
 	 * @return
 	 */
-	public static long eval1(String line) {
+	public static long eval(String line, HashMap<Integer, String> precedence) {
 		ArrayList<String> tokens = tokenize(line);
 		
-		// Deal with single tokens
+		// Single tokens
 		if(tokens.size() == 1) {
 			String t = tokens.get(0);
 			
-			// Evaluate the inside of parens
-			if(t.startsWith("(")) return eval1(t.substring(1, t.length() - 1));
-			return Integer.parseInt(t); // Otherwise its a number
+			// Evaluate parenthesis interiors or just return the value
+			if(t.startsWith("(")) return eval(t.substring(1, t.length() - 1), precedence);
+			return Long.parseLong(t);
 		}
 		
-		// Get first
-		long accumulator = eval1(tokens.get(0));
-		
-		// Process by operator
-		for(int i = 1; i < tokens.size() - 1; i += 2) {
-			String op = tokens.get(i);
+		// Apply each set of operators by precedence, left to right
+		for(int p = 0, levels = precedence.keySet().size(); p < levels; p++) {
+			String opRegex = precedence.get(p);
 			
-			if(op.equals("+")) accumulator += eval1(tokens.get(i + 1));
-			else if(op.equals("*")) accumulator *= eval1(tokens.get(i + 1));
+			// Pass over tokens, replacing sets of 3 (arg, op, arg) with the result
+			for(int i = 1; i < tokens.size() - 1; i += 2) {
+				String op = tokens.get(i);
+				
+				if(op.matches(opRegex)) {
+					long result = 0,
+						 a = eval(tokens.get(i - 1), precedence),
+						 b = eval(tokens.get(i + 1), precedence);
+					
+					// Evaluate whatever operator this is, to support more put them here
+					if(op.equals("+")) result = a + b;
+					else if(op.equals("*")) result = a * b;
+					
+					// Replace set of 3 with the result
+					tokens.set(i - 1, Long.toString(result));
+					tokens.remove(i);
+					tokens.remove(i);
+					i -= 2;
+				}
+			}
 		}
 		
-		return accumulator;
+		return Long.parseLong(tokens.get(0));
 	}
 	
 	/**
