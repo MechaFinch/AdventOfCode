@@ -32,15 +32,11 @@ public class Day23 {
 		}
 		
 		// Run
-		run(cups, 1_000_000, 10_000_000);
-		
-		System.out.println(cups);
+		run(cups, 1_000_000, 10_000);
 		
 		int i = cups.indexOf(1);
 		System.out.println(i);
-		System.out.println(cups.get(i));
-		System.out.println(cups.get(i + 1));
-		System.out.println(cups.get(i + 2));
+		System.out.println(cups.subList(i, i + 4));
 		
 		return ((long) cups.get(i + 1)) * ((long) cups.get(i + 2));
 	}
@@ -89,17 +85,20 @@ public class Day23 {
 			}
 			
 			// Find destination
-			int dest = ((current + max - 2) % max) + 1;
-			while(picked.contains(dest)) dest = ((dest + max - 2) % max) + 1;
+			int dest = (current == 1 ? max : current - 1);
+			while(picked.contains(dest)) dest = (dest == 1 ? max : dest - 1);
 			
 			// Rearrange list
 			// Shift things over by 3 until we've shifted the destination
+			// The efficiency problem is that shifting left with the origin in place is consistently shifting almost the whole thing
+			// We need a separate system that shifts with something else, maybe the picked set, in place
+			System.out.print(((cups.indexOf(dest) - i + max) % max) + "   ");
 			int j = 4,
 				m = 0;
 			for(; (m = cups.get((i + j) % max)) != dest; j++) {
 				cups.set((i + j - 3) % max, m);
-				if(j > 10) break;
 			}
+			System.out.println(j);
 			
 			cups.set((i + j - 3) % max, m);
 			
