@@ -1,9 +1,16 @@
-use std::fs;
+use std::{fs, time::Instant};
 
 
 mod util;
 mod year2022;
 
 fn main() {
-    year2022::day3::main(fs::read_to_string("input.txt").unwrap());
+    let input = fs::read_to_string("input.txt").unwrap();
+    let start_time = Instant::now();
+
+    year2022::day7::main(input);
+
+    let duration = start_time.elapsed();
+
+    println!("\n\nin {:?}", duration);
 }
