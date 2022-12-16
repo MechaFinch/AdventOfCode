@@ -8,7 +8,7 @@ fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
     let start_time = Instant::now();
 
-    year2022::day8::main(input);
+    year2022::day12::main(input);
 
     let duration = start_time.elapsed();
 

@@ -3,6 +3,13 @@ name = "rust"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+cpudebug = []
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+priority-queue = "1.3.0"
+
+[profile.dev]
+opt-level = 3
