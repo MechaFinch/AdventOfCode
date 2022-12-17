@@ -2,12 +2,9 @@ use std::collections::HashMap;
 
 use priority_queue::PriorityQueue;
 
-#[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
-struct Pos {
-    x: i32,
-    y: i32
-}
+use crate::util::Pos;
 
+#[allow(unused_assignments)]
 pub fn main(input: String) {
     let mut x;
     let mut y = 0;

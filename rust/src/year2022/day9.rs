@@ -1,9 +1,6 @@
 
-#[derive(Debug, Copy, Clone, PartialEq)]
-struct Pos {
-    x: i32,
-    y: i32
-}
+
+use create::util::Pos;
 
 pub fn main(input: String) {
     part2(input);
