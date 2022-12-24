@@ -1,6 +1,18 @@
 use std::str::FromStr;
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub struct LPos {
+    pub x: i64,
+    pub y: i64
+}
 
+impl std::hash::Hash for LPos {
+    fn hash<H: std::hash::Hasher>(&self, hasher: &mut H) {
+        hasher.write_i64((self.x << 32).wrapping_add(self.y));
+    }
+}
+
+impl nohash_hasher::IsEnabled for LPos {}
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct Pos {
