@@ -220,6 +220,18 @@ pub fn main(input: String) {
 fn part2(_input: String) {
     // to solve part 2, you either need to run part1's code for 265 hours or recognize patterns in the rocks
     // ill do the latter later
+
+    // alternatively, you can do a little trolling
+    // bit mask 
+    /*
+    since we only move left/right by 1 at a time, we can store our field as packed bits
+    each layer takes up 9 bits, so we can fit 56 lines in an AVX 512 register
+    We use 1 register to store the falling rock and 1 register to store the fallen rocks
+    Each iteration of the movement shifts the falling register left/right by 1 and bit-tests it
+    with the environment register. If nothing overlaps, the shifted result is kept. Then, the same
+    test is done on the rock register shifted right by 9, which moves it down by 1 layer. To finalize
+    a rock's position, it is OR'd into the environment register. 
+     */
 }
 
 fn part1(input: String) {

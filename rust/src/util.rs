@@ -6,6 +6,15 @@ pub struct LPos {
     pub y: i64
 }
 
+impl LPos {
+    pub fn add(&self, other: &LPos) -> LPos {
+        return LPos {
+            x: self.x + other.x,
+            y: self.y + other.y
+        };
+    }
+}
+
 impl std::hash::Hash for LPos {
     fn hash<H: std::hash::Hasher>(&self, hasher: &mut H) {
         hasher.write_i64((self.x << 32).wrapping_add(self.y));
@@ -20,6 +29,15 @@ pub struct Pos {
     pub y: i32
 }
 
+impl Pos {
+    pub fn add(&self, other: &Pos) -> Pos {
+        return Pos {
+            x: self.x + other.x,
+            y: self.y + other.y
+        };
+    }
+}
+
 impl std::hash::Hash for Pos {
     fn hash<H: std::hash::Hasher>(&self, hasher: &mut H) {
         hasher.write_i32((self.x << 16).wrapping_add(self.y));
@@ -27,6 +45,31 @@ impl std::hash::Hash for Pos {
 }
 
 impl nohash_hasher::IsEnabled for Pos {}
+
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub struct Pos3 {
+    pub x: i32,
+    pub y: i32,
+    pub z: i32
+}
+
+impl Pos3 {
+    pub fn add(&self, other: &Pos3) -> Pos3 {
+        return Pos3 {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z
+        };
+    }
+}
+
+impl std::hash::Hash for Pos3 {
+    fn hash<H: std::hash::Hasher>(&self, hasher: &mut H) {
+        hasher.write_i32((self.x << 22).wrapping_add(self.y << 11).wrapping_add(self.z));
+    }
+}
+
+impl nohash_hasher::IsEnabled for Pos3 {}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CPU {

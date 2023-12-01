@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
@@ -19,7 +23,30 @@ import java.util.stream.Stream;
  */
 public class AdventUtil {
 	
-	public static File DEFAULT = new File("input.txt");
+    public static final String DEFAULT_PATH = "input.txt";
+    
+	public static File DEFAULT = new File(DEFAULT_PATH);
+	
+	public static final List<String> DIGIT_WORDS = Arrays.asList(new String[] {
+	       "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
+	});
+	
+	public static final Map<String, Character> DIGIT_WORD_MAP = new HashMap<>();
+	
+	static {
+	    DIGIT_WORD_MAP.put("zero", '0');
+	    DIGIT_WORD_MAP.put("one", '1');
+	    DIGIT_WORD_MAP.put("two", '2');
+	    DIGIT_WORD_MAP.put("three", '3');
+	    DIGIT_WORD_MAP.put("four", '4');
+	    DIGIT_WORD_MAP.put("five", '5');
+	    DIGIT_WORD_MAP.put("six", '6');
+	    DIGIT_WORD_MAP.put("seven", '7');
+	    DIGIT_WORD_MAP.put("eight", '8');
+	    DIGIT_WORD_MAP.put("nine", '9');
+	}
+	
+	
 	
 	/**
 	 * Reads the input file as an arraylist of strings
