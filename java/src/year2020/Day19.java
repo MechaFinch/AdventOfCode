@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day19 {
 	

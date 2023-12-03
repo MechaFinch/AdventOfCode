@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day13 {
 	

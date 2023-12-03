@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day04 {
 	

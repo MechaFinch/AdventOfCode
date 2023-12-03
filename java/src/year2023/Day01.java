@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 /**
  * Day 1

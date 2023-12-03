@@ -3,7 +3,7 @@ package year2020;
 import java.io.IOException;
 import java.util.Arrays;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day11 {
 	

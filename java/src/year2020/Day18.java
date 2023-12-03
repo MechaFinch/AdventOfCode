@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day18 {
 	

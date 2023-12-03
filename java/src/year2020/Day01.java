@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day01 {
 	public static void main(String[] args) throws IOException{

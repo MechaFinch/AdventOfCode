@@ -2,7 +2,7 @@ package year2020;
 
 import java.io.IOException;
 
-import global.AdventUtil;
+import global.util.AdventUtil;
 
 public class Day02 {
 	
