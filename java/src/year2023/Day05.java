@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -67,18 +65,48 @@ public class Day05 {
         // don't forget last map
         mapList.add(workingMap);
         
-        // I started writing code to search backwards from location to seed, but the naive version completed before I got very far (7.5 minutes)
+        /* naive version
+         * ran in the background while writing fast version, completes in 4 minutes
+         * fast version completes in 4.5 seconds
+         *
         part2Naive(mapList, seeds);
+        */
+        
+        // map for quick seed checks
+        TreeMap<Long, Long> seedMap = new TreeMap<>();
+        
+        for(int i = 0; i < seeds.size(); i += 2) {
+            // key = start, value = length
+            seedMap.put(seeds.get(i), seeds.get(i + 1));
+        }
+        
+        // linear search from smallest location value
+        for(int l = 0; l < Long.MAX_VALUE; l++) {
+            // apply maps in reverse
+            long val = l;
+            
+            for(int i = mapList.size() - 1; i >= 0; i--) {
+                val = mapList.get(i).getReverese(val);
+            }
+            
+            Entry<Long, Long> seedRange = seedMap.floorEntry(val);
+            
+            // is it in range
+            if(seedRange != null && seedRange.getKey() + seedRange.getValue() > val) {
+                System.out.println(l);
+                return;
+            }
+        }
     }
     
     /**
      * Naive approach to run in the background while working on a better approach
+     * 
      * @param mapList
      * @param seeds
      */
     private static void part2Naive(List<AgricultureMap> mapList, List<Long> seeds) {
         // find location numbers
-        List<Long> locationNumbers = new ArrayList<>(seeds.size());
         long minLocation = Long.MAX_VALUE;
         
         //System.out.println("se -> so -> fe -> wa -> li -> te -> hu -> location");
@@ -176,17 +204,20 @@ public class Day05 {
  * Represents and applys agricultural mappings
  */
 class AgricultureMap {
-    private TreeMap<Long, Long> sourceLengthMap,
-                                sourceDestMap,
+    private HashMap<Long, Long> sourceLengthMap;
+    
+    private TreeMap<Long, Long> sourceDestMap,
                                 destSourceMap;
     
     public AgricultureMap() {
         this.sourceDestMap = new TreeMap<>();
-        this.sourceLengthMap = new TreeMap<>();
+        this.destSourceMap = new TreeMap<>();
+        this.sourceLengthMap = new HashMap<>();
     }
     
     public void addMapping(long destStart, long sourceStart, long length) {
         this.sourceDestMap.put(sourceStart, destStart);
+        this.destSourceMap.put(destStart, sourceStart);
         this.sourceLengthMap.put(sourceStart, length);
     }
     
@@ -197,7 +228,24 @@ class AgricultureMap {
      * @return
      */
     public long getReverese(long destination) {
-        return 0;
+        Entry<Long, Long> destStartBox = this.destSourceMap.floorEntry(destination);
+        
+        // below smallest?
+        if(destStartBox == null) {
+            return destination;
+        }
+        
+        long destStart = destStartBox.getKey(),
+             sourceStart = destStartBox.getValue(),
+             length = this.sourceLengthMap.get(sourceStart);
+        
+        if(destStart + length <= destination) {
+            // no mapping
+            return destination;
+        } else {
+            // apply mapping
+            return sourceStart + (destination - destStart);
+        }
     }
     
     /**
@@ -208,16 +256,16 @@ class AgricultureMap {
      */
     public long get(long source) {
         // find candidate mapping
-        Long sourceStartBox = this.sourceLengthMap.floorKey(source);
+        Entry<Long, Long> sourceStartBox = this.sourceDestMap.floorEntry(source);
         
         if(sourceStartBox == null) {
             // source is below smallest mapping
             return source;
         }
         
-        long sourceStart = this.sourceLengthMap.floorKey(source),
-             length = this.sourceLengthMap.get(sourceStart),
-             destStart = this.sourceDestMap.get(sourceStart);
+        long sourceStart = sourceStartBox.getKey(),
+             destStart = sourceStartBox.getValue(),
+             length = this.sourceLengthMap.get(sourceStart);
         
         if(sourceStart + length <= source) {
             // no mapping present
