@@ -30,10 +30,7 @@ public class Day05 {
      */
     private static void part2(List<String> lines) {
         // parse seed list
-        List<Long> seeds = Arrays.stream(lines.get(0).substring(7).split(" "))
-                                 .mapToLong(Long::parseLong)
-                                 .boxed()
-                                 .collect(Collectors.toList());
+        List<Long> seeds = AdventUtil.toLongList(lines.get(0).substring(7), " ");
         
         // parse maps
         List<AgricultureMap> mapList = new ArrayList<>();
@@ -142,10 +139,7 @@ public class Day05 {
      */
     private static void part1(List<String> lines) {
         // parse seed list
-        List<Long> seeds = Arrays.stream(lines.get(0).substring(7).split(" "))
-                                 .mapToLong(Long::parseLong)
-                                 .boxed()
-                                 .collect(Collectors.toList());
+        List<Long> seeds = AdventUtil.toLongList(lines.get(0).substring(7), " ");
         
         // parse maps
         List<AgricultureMap> mapList = new ArrayList<>();

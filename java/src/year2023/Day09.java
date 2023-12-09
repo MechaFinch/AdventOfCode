@@ -28,10 +28,7 @@ public class Day09 {
         int sum = 0;
         
         for(String ln : lines) {
-            List<Integer> seq = Arrays.stream(ln.split(" "))
-                                      .mapToInt(Integer::parseInt)
-                                      .boxed()
-                                      .toList();
+            List<Integer> seq = AdventUtil.toIntList(ln, " ");
             
             sum += predictRecursive(seq, false);
         }
@@ -49,10 +46,7 @@ public class Day09 {
         int sum = 0;
         
         for(String ln : lines) {
-            List<Integer> seq = Arrays.stream(ln.split(" "))
-                                      .mapToInt(Integer::parseInt)
-                                      .boxed()
-                                      .toList();
+            List<Integer> seq = AdventUtil.toIntList(ln, " ");
             
             sum += predictRecursive(seq, true);
         }

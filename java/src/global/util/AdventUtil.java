@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 /**
  * Class for general utilities
  * 
+ * Were I to re-do this I would make these all Lists and not ArrayLists, but I don't feel like refactoring all of 2020 for that
+ * 
  * @author Mechafinch
  */
 public class AdventUtil {
@@ -63,7 +65,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an arraylist of ints
+	 * Reads the input file as an arraylist of ints, one per line
 	 * 
 	 * @param f
 	 * @return
@@ -74,7 +76,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an araraylist of ints, with a custom mapping function
+	 * Reads the input file as an araraylist of ints, one per line, with a custom mapping function
 	 * 
 	 * @param f
 	 * @param mapper
@@ -86,7 +88,72 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an arraylist of longs
+	 * Reads the input file as a list of lists of ints; each sub-list being one line
+	 * 
+	 * @param f
+	 * @param sep separator regex expression
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<List<Integer>> intListList(File f, String sep) throws IOException {
+	    List<List<Integer>> listList = new ArrayList<>();
+	    
+	    for(String ln : inputLines(f)) {
+	        listList.add(toIntList(ln, sep));
+	    }
+	    
+	    return listList;
+	}
+	
+	/**
+	 * Reads the input file as a list of lists of ints with a custom mapping function; each sub-list being one line
+	 * 
+	 * @param f
+	 * @param sep separator regex expression
+	 * @param mapper
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<List<Integer>> intListList(File f, String sep, ToIntFunction<? super String> mapper) throws IOException {
+	    List<List<Integer>> listList = new ArrayList<>();
+        
+        for(String ln : inputLines(f)) {
+            listList.add(toIntList(ln, sep, mapper));
+        }
+        
+        return listList;
+    }
+	
+	/**
+	 * Parses a string into a list of ints, separated by the given regex
+	 * 
+	 * @param s
+	 * @param sep
+	 * @return
+	 */
+	public static List<Integer> toIntList(String s, String sep) {
+	    return Arrays.stream(s.split(sep))
+                     .mapToInt(Integer::parseInt)
+                     .boxed()
+                     .toList();
+	}
+	
+	/**
+     * Parses a string into a list of ints, separated by the given regex, using a custom mapping function
+     * 
+     * @param s
+     * @param sep
+     * @return
+     */
+    public static List<Integer> toIntList(String s, String sep, ToIntFunction<? super String> mapper) {
+        return Arrays.stream(s.split(sep))
+                     .mapToInt(mapper)
+                     .boxed()
+                     .toList();
+    }
+	
+	/**
+	 * Reads the input file as an arraylist of longs, one per line
 	 * 
 	 * @param f
 	 * @return
@@ -97,7 +164,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an arraylist of longs, with a custom mapping function
+	 * Reads the input file as an arraylist of longs, one per line, with a custom mapping function
 	 * 
 	 * @param f
 	 * @param mapper
@@ -107,6 +174,71 @@ public class AdventUtil {
 	public static ArrayList<Long> longList(File f, ToLongFunction<? super String> mapper) throws IOException {
 		return (ArrayList<Long>) longStream(f, mapper).boxed().collect(Collectors.toList());
 	}
+	
+	/**
+     * Reads the input file as a list of lists of longs; each sub-list being one line
+     * 
+     * @param f
+     * @param sep separator regex expression
+     * @return
+     * @throws IOException
+     */
+    public static List<List<Long>> longListList(File f, String sep) throws IOException {
+        List<List<Long>> listList = new ArrayList<>();
+        
+        for(String ln : inputLines(f)) {
+            listList.add(toLongList(ln, sep));
+        }
+        
+        return listList;
+    }
+    
+    /**
+     * Reads the input file as a list of lists of longs with a custom mapping function; each sub-list being one line
+     * 
+     * @param f
+     * @param sep separator regex expression
+     * @param mapper
+     * @return
+     * @throws IOException
+     */
+    public static List<List<Long>> longListList(File f, String sep, ToLongFunction<? super String> mapper) throws IOException {
+        List<List<Long>> listList = new ArrayList<>();
+        
+        for(String ln : inputLines(f)) {
+            listList.add(toLongList(ln, sep, mapper));
+        }
+        
+        return listList;
+    }
+    
+    /**
+     * Parses a string into a list of ints, separated by the given regex
+     * 
+     * @param s
+     * @param sep
+     * @return
+     */
+    public static List<Long> toLongList(String s, String sep) {
+        return Arrays.stream(s.split(sep))
+                     .mapToLong(Long::parseLong)
+                     .boxed()
+                     .toList();
+    }
+    
+    /**
+     * Parses a string into a list of ints, separated by the given regex, using a custom mapping function
+     * 
+     * @param s
+     * @param sep
+     * @return
+     */
+    public static List<Long> toLongList(String s, String sep, ToLongFunction<? super String> mapper) {
+        return Arrays.stream(s.split(sep))
+                     .mapToLong(mapper)
+                     .boxed()
+                     .toList();
+    }
 	
 	/**
 	 * Reads the input file as a stream of strings
@@ -120,7 +252,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as a stream of ints
+	 * Reads the input file as a stream of ints, one per line
 	 * 
 	 * @param f
 	 * @return
@@ -131,7 +263,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as a stream of ints, with a custom mapping function
+	 * Reads the input file as a stream of ints, one per line, with a custom mapping function
 	 * 
 	 * @param f
 	 * @param mapper
@@ -143,7 +275,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as a stream of longs
+	 * Reads the input file as a stream of longs, one per line
 	 * 
 	 * @param f
 	 * @return
@@ -154,7 +286,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as a stream of longs, with a custom mapping function
+	 * Reads the input file as a stream of longs, one per line, with a custom mapping function
 	 * 
 	 * @param f
 	 * @param mapper
@@ -177,7 +309,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an array of ints
+	 * Reads the input file as an array of ints, one per line
 	 * 
 	 * @param f
 	 * @return
@@ -188,7 +320,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an array of ints, with a custom mapping function
+	 * Reads the input file as an array of ints, one per line, with a custom mapping function
 	 * 
 	 * @param f
 	 * @param mapper
@@ -200,7 +332,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an array of longs
+	 * Reads the input file as an array of longs, one per line
 	 * 
 	 * @param f
 	 * @return
@@ -211,7 +343,7 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * Reads the input file as an array of longs, with a custom mapping function
+	 * Reads the input file as an array of longs, one per line, with a custom mapping function
 	 * 
 	 * @param f
 	 * @param mapper

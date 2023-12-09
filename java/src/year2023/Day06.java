@@ -51,13 +51,6 @@ public class Day06 {
     }
     
     private static List<Long> parseLine(String ln) {
-        String[] split = ln.substring(9)
-                           .trim()
-                           .split("\\s+");
-        
-        return Arrays.stream(split)
-                     .mapToLong(Long::parseLong)
-                     .boxed()
-                     .toList();
+        return AdventUtil.toLongList(ln.substring(9).trim(), "\\s+");
     }
 }
