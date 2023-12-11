@@ -15,7 +15,7 @@ public class Advent {
         
         long startTime = System.nanoTime();
         
-        year2023.Day10.run(p.toFile());
+        year2023.Day11.run(p.toFile());
         
         long endTime = System.nanoTime();
         long timeMillis = (endTime - startTime) / 1_000_000;
