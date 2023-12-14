@@ -48,7 +48,39 @@ public class AdventUtil {
 	    DIGIT_WORD_MAP.put("nine", '9');
 	}
 	
-	
+	/**
+	 * An enum for directions. Can increment x/y.
+	 */
+	public enum Direction {
+	    NORTH,
+	    SOUTH,
+	    EAST,
+	    WEST;
+	    
+	    /**
+	     * Converts X -> next X based on this direction
+	     */
+	    public long convertX(long x) {
+	        return switch(this) {
+	            case NORTH  -> x;
+	            case SOUTH  -> x;
+	            case EAST   -> x + 1;
+	            case WEST   -> x - 1;
+	        };
+	    }
+	    
+	    /**
+	     * Converts Y -> next Y based on this direction
+	     */
+	    public long convertY(long y) {
+	        return switch(this) {
+	            case NORTH  -> y - 1;
+	            case SOUTH  -> y + 1;
+	            case EAST   -> y;
+	            case WEST   -> y;
+	        };
+	    }
+	}
 	
 	/**
 	 * Reads the input file as an arraylist of strings
