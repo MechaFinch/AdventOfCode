@@ -49,49 +49,6 @@ public class AdventUtil {
 	}
 	
 	/**
-	 * An enum for directions. Can increment x/y.
-	 */
-	public enum Direction {
-	    NORTH,
-	    SOUTH,
-	    EAST,
-	    WEST;
-	    
-	    public Direction opposite() {
-	        return switch(this) {
-	            case NORTH -> SOUTH;
-	            case SOUTH -> NORTH;
-	            case EAST  -> WEST;
-	            case WEST  -> EAST;
-	        };
-	    }
-	    
-	    /**
-	     * Converts X -> next X based on this direction
-	     */
-	    public long convertX(long x) {
-	        return switch(this) {
-	            case NORTH  -> x;
-	            case SOUTH  -> x;
-	            case EAST   -> x + 1;
-	            case WEST   -> x - 1;
-	        };
-	    }
-	    
-	    /**
-	     * Converts Y -> next Y based on this direction
-	     */
-	    public long convertY(long y) {
-	        return switch(this) {
-	            case NORTH  -> y - 1;
-	            case SOUTH  -> y + 1;
-	            case EAST   -> y;
-	            case WEST   -> y;
-	        };
-	    }
-	}
-	
-	/**
 	 * Reads the input file as an arraylist of strings
 	 * 
 	 * @param f

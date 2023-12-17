@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import global.util.AdventUtil;
-import global.util.AdventUtil.Direction;
+import global.util.Direction;
 import global.util.Pair;
 
 /**

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import global.util.AdventUtil;
+import global.util.Direction;
 import global.util.Pair;
 
 /**
@@ -419,35 +420,4 @@ enum Enclosure {
     BOUNDARY,
     INSIDE,
     NONE
-}
-
-enum Direction {
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST;
-    
-    /**
-     * Converts X -> next X based on this direction
-     */
-    public int convertX(int x) {
-        return switch(this) {
-            case NORTH  -> x;
-            case SOUTH  -> x;
-            case EAST   -> x + 1;
-            case WEST   -> x - 1;
-        };
-    }
-    
-    /**
-     * Converts Y -> next Y based on this direction
-     */
-    public int convertY(int y) {
-        return switch(this) {
-            case NORTH  -> y - 1;
-            case SOUTH  -> y + 1;
-            case EAST   -> y;
-            case WEST   -> y;
-        };
-    }
 }
