@@ -19,6 +19,78 @@ public class Day15 {
     }
     
     /**
+     * A box containing lenses
+     */
+    private static class Box {
+        public LinkedList<Lens> lenses = new LinkedList<>();
+        
+        public Box() {
+            this.lenses = new LinkedList<>();
+        }
+        
+        /**
+         * Adds a lens to the box
+         * 
+         * @param l
+         */
+        public void put(Lens l) {
+            // replace if same label present
+            for(int i = 0; i < this.lenses.size(); i++) {
+                Lens cl = this.lenses.get(i);
+            
+                if(cl.label().equals(l.label())) {
+                    this.lenses.set(i, l);
+                    return;
+                }
+            }
+            
+            // not present
+            this.lenses.add(l);
+        }
+        
+        /**
+         * Removes a lens
+         * 
+         * @param label
+         */
+        public void remove(String label) {
+            for(int i = 0; i < this.lenses.size(); i++) {
+                Lens l = this.lenses.get(i);
+                
+                if(l.label().equals(label)) {
+                    this.lenses.remove(i);
+                    return;
+                }
+            }
+        }
+        
+        /**
+         * Gets the total focusing power of the lenses in the box according to its number
+         * 
+         * @param boxNumber
+         * @return
+         */
+        public long getFocusingPower(int boxNumber) {
+            long fp = 0;
+            
+            for(int i = 0; i < this.lenses.size(); i++) {
+                Lens l = this.lenses.get(i);
+                
+                fp += (boxNumber + 1) * (i + 1) * l.focalLength();
+            }
+            
+            return fp;
+        }
+    }
+
+    /**
+     * A lens
+     */
+    private record Lens(String label, long focalLength) {
+        
+    }
+    
+    /**
      * Steps have 2-3 parts:
      * 1. Label. Hash this for box index
      * 2. Operation. = -> set box to value; - -> remove lens w/ label if present
@@ -119,76 +191,4 @@ public class Day15 {
         
         return v;
     }
-}
-
-/**
- * A box containing lenses
- */
-class Box {
-    public LinkedList<Lens> lenses = new LinkedList<>();
-    
-    public Box() {
-        this.lenses = new LinkedList<>();
-    }
-    
-    /**
-     * Adds a lens to the box
-     * 
-     * @param l
-     */
-    public void put(Lens l) {
-        // replace if same label present
-        for(int i = 0; i < this.lenses.size(); i++) {
-            Lens cl = this.lenses.get(i);
-        
-            if(cl.label().equals(l.label())) {
-                this.lenses.set(i, l);
-                return;
-            }
-        }
-        
-        // not present
-        this.lenses.add(l);
-    }
-    
-    /**
-     * Removes a lens
-     * 
-     * @param label
-     */
-    public void remove(String label) {
-        for(int i = 0; i < this.lenses.size(); i++) {
-            Lens l = this.lenses.get(i);
-            
-            if(l.label().equals(label)) {
-                this.lenses.remove(i);
-                return;
-            }
-        }
-    }
-    
-    /**
-     * Gets the total focusing power of the lenses in the box according to its number
-     * 
-     * @param boxNumber
-     * @return
-     */
-    public long getFocusingPower(int boxNumber) {
-        long fp = 0;
-        
-        for(int i = 0; i < this.lenses.size(); i++) {
-            Lens l = this.lenses.get(i);
-            
-            fp += (boxNumber + 1) * (i + 1) * l.focalLength();
-        }
-        
-        return fp;
-    }
-}
-
-/**
- * A lens
- */
-record Lens(String label, long focalLength) {
-    
 }

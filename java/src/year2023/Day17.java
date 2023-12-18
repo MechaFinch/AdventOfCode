@@ -26,9 +26,33 @@ public class Day17 {
         part1(AdventUtil.inputList(f));
     }
     
+    private record SearchPoint(int x, int y, Direction d, int a) {
+        public List<SearchPoint> neighbors(int width, int height, int minDist, int maxDist) {
+            List<SearchPoint> ns = new ArrayList<>();
+            
+            for(int offs = minDist; offs <= maxDist; offs++) {
+                switch(this.d) {
+                    case NORTH:
+                    case SOUTH:
+                        if(this.x + offs < width) ns.add(new SearchPoint(this.x + offs, this.y, Direction.EAST, offs));
+                        if(this.x - offs >= 0) ns.add(new SearchPoint(this.x - offs, this.y, Direction.WEST, offs));
+                        break;
+                        
+                    case EAST:
+                    case WEST:
+                        if(this.y - offs >= 0) ns.add(new SearchPoint(this.x, this.y - offs, Direction.NORTH, offs));
+                        if(this.y + offs < height) ns.add(new SearchPoint(this.x, this.y + offs, Direction.SOUTH, offs));
+                        break;
+                }
+            }
+            
+            return ns;
+        }
+    }
+    
     /**
      * Parse to a grid, pathfind to the end.
-     * Returns a value off by 1 for part 1
+     * Returns a value off by 1 for part 1 and off by 4 for part 2
      * I have no fucking clue why
      * 
      * @param lines
@@ -183,29 +207,5 @@ public class Day17 {
     private static int heuristic(SearchPoint sp, int gx, int gy) {
         return 0;
         //return Math.abs(gx - sp.x()) + Math.abs(gy - sp.y());
-    }
-}
-
-record SearchPoint(int x, int y, Direction d, int a) {
-    public List<SearchPoint> neighbors(int width, int height, int minDist, int maxDist) {
-        List<SearchPoint> ns = new ArrayList<>();
-        
-        for(int offs = minDist; offs <= maxDist; offs++) {
-            switch(this.d) {
-                case NORTH:
-                case SOUTH:
-                    if(this.x + offs < width) ns.add(new SearchPoint(this.x + offs, this.y, Direction.EAST, offs));
-                    if(this.x - offs >= 0) ns.add(new SearchPoint(this.x - offs, this.y, Direction.WEST, offs));
-                    break;
-                    
-                case EAST:
-                case WEST:
-                    if(this.y - offs >= 0) ns.add(new SearchPoint(this.x, this.y - offs, Direction.NORTH, offs));
-                    if(this.y + offs < height) ns.add(new SearchPoint(this.x, this.y + offs, Direction.SOUTH, offs));
-                    break;
-            }
-        }
-        
-        return ns;
     }
 }

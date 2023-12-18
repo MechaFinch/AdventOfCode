@@ -21,6 +21,16 @@ public class Day03 {
     }
     
     /**
+     * A part number in the diagram
+     * @param startPosition position of MSD
+     * @param width nubmer of digits
+     * @param value value
+     */
+    private record PartNumber(Pair<Integer, Integer> startPosition, int width, int value) {
+        
+    }
+    
+    /**
      * Find and sum the gear ratios
      * 
      * @param strings
@@ -231,14 +241,4 @@ public class Day03 {
         System.out.println();
         System.out.println(sum);
     }
-}
-
-/**
- * A part number in the diagram
- * @param startPosition position of MSD
- * @param width nubmer of digits
- * @param value value
- */
-record PartNumber(Pair<Integer, Integer> startPosition, int width, int value) {
-    
 }

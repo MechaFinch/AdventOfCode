@@ -19,6 +19,29 @@ public class Day10 {
     }
     
     /**
+     * A representation of the pipes that's easier to think about
+     */
+    private enum Pipe {
+        VERTICAL,
+        HORIZONTAL,
+        NORTH_EAST,
+        NORTH_WEST,
+        SOUTH_WEST,
+        SOUTH_EAST,
+        NONE,
+        START
+    }
+
+    /**
+     * An enum for part 2, as unconnected pipes can be contained too
+     */
+    private enum Enclosure {
+        BOUNDARY,
+        INSIDE,
+        NONE
+    }
+    
+    /**
      * Convert input into an array of Pipes
      * Navigate along potential loops until one is found
      * Once it is found, follow it again and fill in any space to the side (according to pairity) enclosed.
@@ -89,8 +112,8 @@ public class Day10 {
                 out:
                 while(true) {
                     // walk along pipe
-                    x = dir.convertX(x);
-                    y = dir.convertY(y);
+                    x = dir.convertX(x, 1);
+                    y = dir.convertY(y, 1);
                     
                     Pipe p = grid[x][y];
                     
@@ -213,7 +236,7 @@ public class Day10 {
         };
         
         for(Direction d : directions) {
-            flood(grid, d.convertX(sx), d.convertY(sy));
+            flood(grid, d.convertX(sx, 1), d.convertY(sy, 1));
         }
     }
     
@@ -313,8 +336,8 @@ public class Day10 {
         
         while(true) {
             // walk along pipe
-            x = dir.convertX(x);
-            y = dir.convertY(y);
+            x = dir.convertX(x, 1);
+            y = dir.convertY(y, 1);
             d++;
             
             // check for valid pipe & get next direction
@@ -397,27 +420,4 @@ public class Day10 {
             return new Pair<>(-1, new Pair<>(0, null));
         }
     }
-}
-
-/**
- * A representation of the pipes that's easier to think about
- */
-enum Pipe {
-    VERTICAL,
-    HORIZONTAL,
-    NORTH_EAST,
-    NORTH_WEST,
-    SOUTH_WEST,
-    SOUTH_EAST,
-    NONE,
-    START
-}
-
-/**
- * An enum for part 2, as unconnected pipes can be contained too
- */
-enum Enclosure {
-    BOUNDARY,
-    INSIDE,
-    NONE
 }

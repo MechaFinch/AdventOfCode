@@ -22,6 +22,84 @@ public class Day05 {
     }
     
     /**
+     * Represents and applys agricultural mappings
+     */
+    private static class AgricultureMap {
+        private HashMap<Long, Long> sourceLengthMap;
+        
+        private TreeMap<Long, Long> sourceDestMap,
+                                    destSourceMap;
+        
+        public AgricultureMap() {
+            this.sourceDestMap = new TreeMap<>();
+            this.destSourceMap = new TreeMap<>();
+            this.sourceLengthMap = new HashMap<>();
+        }
+        
+        public void addMapping(long destStart, long sourceStart, long length) {
+            this.sourceDestMap.put(sourceStart, destStart);
+            this.destSourceMap.put(destStart, sourceStart);
+            this.sourceLengthMap.put(sourceStart, length);
+        }
+        
+        /**
+         * Finds a source which corresponds to this destination
+         * 
+         * @param destination
+         * @return
+         */
+        public long getReverese(long destination) {
+            Entry<Long, Long> destStartBox = this.destSourceMap.floorEntry(destination);
+            
+            // below smallest?
+            if(destStartBox == null) {
+                return destination;
+            }
+            
+            long destStart = destStartBox.getKey(),
+                 sourceStart = destStartBox.getValue(),
+                 length = this.sourceLengthMap.get(sourceStart);
+            
+            if(destStart + length <= destination) {
+                // no mapping
+                return destination;
+            } else {
+                // apply mapping
+                return sourceStart + (destination - destStart);
+            }
+        }
+        
+        /**
+         * Gets the mapped value of the input
+         * 
+         * @param source
+         * @return
+         */
+        public long get(long source) {
+            // find candidate mapping
+            Entry<Long, Long> sourceStartBox = this.sourceDestMap.floorEntry(source);
+            
+            if(sourceStartBox == null) {
+                // source is below smallest mapping
+                return source;
+            }
+            
+            long sourceStart = sourceStartBox.getKey(),
+                 destStart = sourceStartBox.getValue(),
+                 length = this.sourceLengthMap.get(sourceStart);
+            
+            if(sourceStart + length <= source) {
+                // no mapping present
+                return source;
+            } else {
+                // apply mapping
+                return destStart + (source - sourceStart);
+            }
+        }
+    }
+
+    
+    /**
      * Seed values are ranges
      * If searching from seed -> location, requires a couple billion checks
      * Searching locations -> seeds may be much faster
@@ -194,79 +272,3 @@ public class Day05 {
     }
 }
 
-/**
- * Represents and applys agricultural mappings
- */
-class AgricultureMap {
-    private HashMap<Long, Long> sourceLengthMap;
-    
-    private TreeMap<Long, Long> sourceDestMap,
-                                destSourceMap;
-    
-    public AgricultureMap() {
-        this.sourceDestMap = new TreeMap<>();
-        this.destSourceMap = new TreeMap<>();
-        this.sourceLengthMap = new HashMap<>();
-    }
-    
-    public void addMapping(long destStart, long sourceStart, long length) {
-        this.sourceDestMap.put(sourceStart, destStart);
-        this.destSourceMap.put(destStart, sourceStart);
-        this.sourceLengthMap.put(sourceStart, length);
-    }
-    
-    /**
-     * Finds a source which corresponds to this destination
-     * 
-     * @param destination
-     * @return
-     */
-    public long getReverese(long destination) {
-        Entry<Long, Long> destStartBox = this.destSourceMap.floorEntry(destination);
-        
-        // below smallest?
-        if(destStartBox == null) {
-            return destination;
-        }
-        
-        long destStart = destStartBox.getKey(),
-             sourceStart = destStartBox.getValue(),
-             length = this.sourceLengthMap.get(sourceStart);
-        
-        if(destStart + length <= destination) {
-            // no mapping
-            return destination;
-        } else {
-            // apply mapping
-            return sourceStart + (destination - destStart);
-        }
-    }
-    
-    /**
-     * Gets the mapped value of the input
-     * 
-     * @param source
-     * @return
-     */
-    public long get(long source) {
-        // find candidate mapping
-        Entry<Long, Long> sourceStartBox = this.sourceDestMap.floorEntry(source);
-        
-        if(sourceStartBox == null) {
-            // source is below smallest mapping
-            return source;
-        }
-        
-        long sourceStart = sourceStartBox.getKey(),
-             destStart = sourceStartBox.getValue(),
-             length = this.sourceLengthMap.get(sourceStart);
-        
-        if(sourceStart + length <= source) {
-            // no mapping present
-            return source;
-        } else {
-            // apply mapping
-            return destStart + (source - sourceStart);
-        }
-    }
-}

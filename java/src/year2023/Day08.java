@@ -21,6 +21,36 @@ public class Day08 {
     }
     
     /**
+     * @param label Node label
+     * @param index instruction index
+     */
+    private record NodeState(String label, int index) {
+        
+    }
+
+    /**
+     * A Node
+     */
+    private static class Node {
+        public final String label;
+        
+        public Node left, right;
+        
+        public Node(String label) {
+            this.label = label;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    /**
+     * A Node that can be created without its target Nodes existing, requiring a secondary data structure
+     */
+    private record PartialNode(String label, String left, String right) {
+        
+    }
+    
+    /**
      * Search for cycles ending on a Z, and use the cycle lengths to calculate when they intersect
      * 
      * @param lines
@@ -210,34 +240,4 @@ public class Day08 {
         
         return fullNodeMap;
     }
-}
-
-/**
- * @param label Node label
- * @param index instruction index
- */
-record NodeState(String label, int index) {
-    
-}
-
-/**
- * A Node
- */
-class Node {
-    public final String label;
-    
-    public Node left, right;
-    
-    public Node(String label) {
-        this.label = label;
-        this.left = null;
-        this.right = null;
-    }
-}
-
-/**
- * A Node that can be created without its target Nodes existing, requiring a secondary data structure
- */
-record PartialNode(String label, String left, String right) {
-    
 }

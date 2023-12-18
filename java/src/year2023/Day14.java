@@ -17,6 +17,68 @@ public class Day14 {
         part2(AdventUtil.inputList(f));
     }
     
+    private enum Rock {
+        ROUND,
+        SQUARE,
+        NONE
+    }
+
+    /**
+     * A wrapper class for the rock grid, with hashCode and equals to enable HashMap-ing
+     */
+    private static class RockState {
+        public Rock[][] rocks;
+        
+        private Integer cachedCode = null;
+        
+        public RockState(Rock[][] rs) {
+            this.rocks = new Rock[rs.length][rs[0].length];
+            
+            for(int x = 0; x < rs.length; x++) {
+                for(int y = 0; y < rs[0].length; y++) {
+                    this.rocks[x][y] = rs[x][y];
+                }
+            }
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            if(o instanceof RockState rs) {
+                for(int x = 0; x < this.rocks.length; x++) {
+                    for(int y = 0; y < this.rocks[0].length; y++) {
+                        if(this.rocks[x][y] != rs.rocks[x][y]) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        @Override
+        public int hashCode() {
+            if(this.cachedCode != null) return this.cachedCode;
+            
+            int code = 0;
+            
+            for(int x = 0; x < this.rocks.length; x++) {
+                int rCount = 0;
+                
+                for(int y = 0; y < this.rocks[0].length; y++) {
+                    rCount += (this.rocks[x][y] == Rock.ROUND) ? 1 : 0;
+                }
+                
+                code = (code << 1) ^ rCount;
+            }
+            
+            this.cachedCode = code;
+            return code;
+        }
+    }
+    
     /**
      * Parse into a grid of rocks
      * run the spin cycle a billion times
@@ -272,67 +334,5 @@ public class Day14 {
                 }
                 break;
         }
-    }
-}
-
-enum Rock {
-    ROUND,
-    SQUARE,
-    NONE
-}
-
-/**
- * A wrapper class for the rock grid, with hashCode and equals to enable HashMap-ing
- */
-class RockState {
-    public Rock[][] rocks;
-    
-    private Integer cachedCode = null;
-    
-    public RockState(Rock[][] rs) {
-        this.rocks = new Rock[rs.length][rs[0].length];
-        
-        for(int x = 0; x < rs.length; x++) {
-            for(int y = 0; y < rs[0].length; y++) {
-                this.rocks[x][y] = rs[x][y];
-            }
-        }
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if(o instanceof RockState rs) {
-            for(int x = 0; x < this.rocks.length; x++) {
-                for(int y = 0; y < this.rocks[0].length; y++) {
-                    if(this.rocks[x][y] != rs.rocks[x][y]) {
-                        return false;
-                    }
-                }
-            }
-            
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    @Override
-    public int hashCode() {
-        if(this.cachedCode != null) return this.cachedCode;
-        
-        int code = 0;
-        
-        for(int x = 0; x < this.rocks.length; x++) {
-            int rCount = 0;
-            
-            for(int y = 0; y < this.rocks[0].length; y++) {
-                rCount += (this.rocks[x][y] == Rock.ROUND) ? 1 : 0;
-            }
-            
-            code = (code << 1) ^ rCount;
-        }
-        
-        this.cachedCode = code;
-        return code;
     }
 }

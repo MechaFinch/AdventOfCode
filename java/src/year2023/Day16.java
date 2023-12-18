@@ -21,6 +21,148 @@ public class Day16 {
     }
     
     /**
+     * Mirrors & splitters, described left to right
+     */
+    private enum Mirror {
+        UP,         // /
+        DOWN,       // \
+        VERTICAL,   // |
+        HORIZONTAL, // -
+        NONE;       // .
+    }
+
+    /**
+     * Describes the contents of a tile, both the object and the light
+     */
+    private static class Tile {
+        public final Mirror contents;
+        
+        private Map<Direction, Boolean> incoming,
+                                        outgoing;
+        
+        private boolean hasLight;
+        
+        public Tile(Mirror contents) {
+            this.contents = contents;
+            
+            this.incoming = new HashMap<>();
+            this.outgoing = new HashMap<>();
+            this.hasLight = false;
+            
+            this.incoming.put(Direction.NORTH, false);
+            this.incoming.put(Direction.SOUTH, false);
+            this.incoming.put(Direction.EAST, false);
+            this.incoming.put(Direction.WEST, false);
+            
+            this.outgoing.put(Direction.NORTH, false);
+            this.outgoing.put(Direction.SOUTH, false);
+            this.outgoing.put(Direction.EAST, false);
+            this.outgoing.put(Direction.WEST, false);
+        }
+        
+        public boolean hasLight() { return this.hasLight; }
+        
+        /**
+         * Adds an incoming light ray, and returns 0-2 outgoing ray directions.
+         * In the Pair, a Direction will be present if it is newly outgoing, and null if not used. It is allowed that Pair.b is non-null while Pair.a is null.
+         * The Direction passed is the perspective of the light. Light moving West shall pass West to this function.
+         * 
+         * @param d
+         * @return
+         */
+        public Pair<Direction, Direction> addIncoming(Direction d) {
+            Direction newDir1 = null,
+                      newDir2 = null;
+            
+            this.hasLight = true;
+            
+            // if we've already had incoming from the direction, no change
+            if(this.incoming.get(d)) {
+                return new Pair<>(newDir1, newDir2);
+            }
+            
+            this.incoming.put(d, true);
+            
+            Direction o1, o2;
+            
+            switch(this.contents) {
+                case UP:
+                    o1 = switch(d) {
+                        case NORTH  -> Direction.EAST;
+                        case SOUTH  -> Direction.WEST;
+                        case EAST   -> Direction.NORTH;
+                        case WEST   -> Direction.SOUTH;
+                    };
+                    
+                    if(!this.outgoing.get(o1)) newDir1 = o1;
+                    this.outgoing.put(o1, true);
+                    break;
+                    
+                case DOWN:
+                    o1 = switch(d) {
+                        case NORTH  -> Direction.WEST;
+                        case SOUTH  -> Direction.EAST;
+                        case EAST   -> Direction.SOUTH;
+                        case WEST   -> Direction.NORTH;
+                    };
+                    
+                    if(!this.outgoing.get(o1)) newDir1 = o1;
+                    this.outgoing.put(o1, true);
+                    break;
+                    
+                case VERTICAL:
+                    o1 = switch(d) {
+                        case NORTH  -> Direction.NORTH;
+                        case SOUTH  -> Direction.SOUTH;
+                        case EAST   -> Direction.NORTH;
+                        case WEST   -> Direction.NORTH;
+                    };
+                    
+                    o2 = switch(d) {
+                        case NORTH  -> Direction.NORTH;
+                        case SOUTH  -> Direction.SOUTH;
+                        case EAST   -> Direction.SOUTH;
+                        case WEST   -> Direction.SOUTH;
+                    };
+                    
+                    if(!this.outgoing.get(o1)) newDir1 = o1;
+                    this.outgoing.put(o1, true);
+                    if(!this.outgoing.get(o2)) newDir2 = o2;
+                    this.outgoing.put(o2, true);
+                    break;
+                    
+                case HORIZONTAL:
+                    o1 = switch(d) {
+                        case NORTH  -> Direction.EAST;
+                        case SOUTH  -> Direction.EAST;
+                        case EAST   -> Direction.EAST;
+                        case WEST   -> Direction.WEST;
+                    };
+                    
+                    o2 = switch(d) {
+                        case NORTH  -> Direction.WEST;
+                        case SOUTH  -> Direction.WEST;
+                        case EAST   -> Direction.EAST;
+                        case WEST   -> Direction.WEST;
+                    };
+                    
+                    if(!this.outgoing.get(o1)) newDir1 = o1;
+                    this.outgoing.put(o1, true);
+                    if(!this.outgoing.get(o2)) newDir2 = o2;
+                    this.outgoing.put(o2, true);
+                    break;
+                    
+                case NONE:
+                    if(!this.outgoing.get(d)) newDir1 = d;
+                    this.outgoing.put(d, true);
+                    break;
+            }
+            
+            return new Pair<>(newDir1, newDir2);
+        }
+    }
+    
+    /**
      * Parse input into a grid of mirrors & splitters, determine where light goes following their rules
      * 
      * @param lines
@@ -175,8 +317,8 @@ public class Day16 {
             
             if(d1 != null && d2 != null) {
                 // split. recurse
-                stepLight(grid, (int) d1.convertX(x), (int) d1.convertY(y), d1);
-                stepLight(grid, (int) d2.convertX(x), (int) d2.convertY(y), d2);
+                stepLight(grid, (int) d1.convertX(x, 1), (int) d1.convertY(y, 1), d1);
+                stepLight(grid, (int) d2.convertX(x, 1), (int) d2.convertY(y, 1), d2);
                 return;
             } else if(d1 != null) {
                 // 1 way to go. Continue & loop
@@ -189,150 +331,8 @@ public class Day16 {
                 return;
             }
             
-            x = (int) d.convertX(x);
-            y = (int) d.convertY(y);
+            x = (int) d.convertX(x, 1);
+            y = (int) d.convertY(y, 1);
         }
-    }
-}
-
-/**
- * Mirrors & splitters, described left to right
- */
-enum Mirror {
-    UP,         // /
-    DOWN,       // \
-    VERTICAL,   // |
-    HORIZONTAL, // -
-    NONE;       // .
-}
-
-/**
- * Describes the contents of a tile, both the object and the light
- */
-class Tile {
-    public final Mirror contents;
-    
-    private Map<Direction, Boolean> incoming,
-                                    outgoing;
-    
-    private boolean hasLight;
-    
-    public Tile(Mirror contents) {
-        this.contents = contents;
-        
-        this.incoming = new HashMap<>();
-        this.outgoing = new HashMap<>();
-        this.hasLight = false;
-        
-        this.incoming.put(Direction.NORTH, false);
-        this.incoming.put(Direction.SOUTH, false);
-        this.incoming.put(Direction.EAST, false);
-        this.incoming.put(Direction.WEST, false);
-        
-        this.outgoing.put(Direction.NORTH, false);
-        this.outgoing.put(Direction.SOUTH, false);
-        this.outgoing.put(Direction.EAST, false);
-        this.outgoing.put(Direction.WEST, false);
-    }
-    
-    public boolean hasLight() { return this.hasLight; }
-    
-    /**
-     * Adds an incoming light ray, and returns 0-2 outgoing ray directions.
-     * In the Pair, a Direction will be present if it is newly outgoing, and null if not used. It is allowed that Pair.b is non-null while Pair.a is null.
-     * The Direction passed is the perspective of the light. Light moving West shall pass West to this function.
-     * 
-     * @param d
-     * @return
-     */
-    public Pair<Direction, Direction> addIncoming(Direction d) {
-        Direction newDir1 = null,
-                  newDir2 = null;
-        
-        this.hasLight = true;
-        
-        // if we've already had incoming from the direction, no change
-        if(this.incoming.get(d)) {
-            return new Pair<>(newDir1, newDir2);
-        }
-        
-        this.incoming.put(d, true);
-        
-        Direction o1, o2;
-        
-        switch(this.contents) {
-            case UP:
-                o1 = switch(d) {
-                    case NORTH  -> Direction.EAST;
-                    case SOUTH  -> Direction.WEST;
-                    case EAST   -> Direction.NORTH;
-                    case WEST   -> Direction.SOUTH;
-                };
-                
-                if(!this.outgoing.get(o1)) newDir1 = o1;
-                this.outgoing.put(o1, true);
-                break;
-                
-            case DOWN:
-                o1 = switch(d) {
-                    case NORTH  -> Direction.WEST;
-                    case SOUTH  -> Direction.EAST;
-                    case EAST   -> Direction.SOUTH;
-                    case WEST   -> Direction.NORTH;
-                };
-                
-                if(!this.outgoing.get(o1)) newDir1 = o1;
-                this.outgoing.put(o1, true);
-                break;
-                
-            case VERTICAL:
-                o1 = switch(d) {
-                    case NORTH  -> Direction.NORTH;
-                    case SOUTH  -> Direction.SOUTH;
-                    case EAST   -> Direction.NORTH;
-                    case WEST   -> Direction.NORTH;
-                };
-                
-                o2 = switch(d) {
-                    case NORTH  -> Direction.NORTH;
-                    case SOUTH  -> Direction.SOUTH;
-                    case EAST   -> Direction.SOUTH;
-                    case WEST   -> Direction.SOUTH;
-                };
-                
-                if(!this.outgoing.get(o1)) newDir1 = o1;
-                this.outgoing.put(o1, true);
-                if(!this.outgoing.get(o2)) newDir2 = o2;
-                this.outgoing.put(o2, true);
-                break;
-                
-            case HORIZONTAL:
-                o1 = switch(d) {
-                    case NORTH  -> Direction.EAST;
-                    case SOUTH  -> Direction.EAST;
-                    case EAST   -> Direction.EAST;
-                    case WEST   -> Direction.WEST;
-                };
-                
-                o2 = switch(d) {
-                    case NORTH  -> Direction.WEST;
-                    case SOUTH  -> Direction.WEST;
-                    case EAST   -> Direction.EAST;
-                    case WEST   -> Direction.WEST;
-                };
-                
-                if(!this.outgoing.get(o1)) newDir1 = o1;
-                this.outgoing.put(o1, true);
-                if(!this.outgoing.get(o2)) newDir2 = o2;
-                this.outgoing.put(o2, true);
-                break;
-                
-            case NONE:
-                if(!this.outgoing.get(d)) newDir1 = d;
-                this.outgoing.put(d, true);
-                break;
-        }
-        
-        return new Pair<>(newDir1, newDir2);
     }
 }
