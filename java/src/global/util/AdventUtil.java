@@ -49,6 +49,31 @@ public class AdventUtil {
 	}
 	
 	/**
+	 * Returns the least common multiple of the values
+	 * @param vals
+	 * @return
+	 */
+	public static long lcm(List<Long> vals) {
+	    long lcm = vals.get(0);
+        
+        for(int i = 1; i < vals.size(); i++) {
+            lcm = (vals.get(i) * lcm) / gcd(vals.get(i), lcm);
+        }
+        
+        return lcm;
+	}
+	
+	/**
+     * @param a
+     * @param b
+     * @return greatest common denominator of a and b
+     */
+    private static long gcd(long a, long b) {
+        if(b == 0) return a;
+        return gcd(b, a % b);
+    }
+	
+	/**
 	 * Reads the input file as an arraylist of strings
 	 * 
 	 * @param f

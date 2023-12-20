@@ -69,7 +69,7 @@ public class Day08 {
         }
         
         // for full input, start is always equal to len
-        List<Integer> cycleLengths = new ArrayList<>();
+        List<Long> cycleLengths = new ArrayList<>();
         
         for(Node n : nodes) {
             // find when this node finds a Z-node, then when it cycles
@@ -101,7 +101,7 @@ public class Day08 {
                     
                     if(cycleFound) {
                         System.out.println("Found cycle for " + n.label + ": start " + firstZ + " len " + (count - firstZ) + " states " + zStates.size());
-                        cycleLengths.add(firstZ);
+                        cycleLengths.add((long) firstZ);
                         break;
                     }
                 }
@@ -109,23 +109,7 @@ public class Day08 {
         }
         
         // find least common multiple of all cycles
-        long lcm = cycleLengths.get(0);
-        
-        for(int i = 1; i < cycleLengths.size(); i++) {
-            lcm = (cycleLengths.get(i) * lcm) / gcd(cycleLengths.get(i), lcm);
-        }
-        
-        System.out.println(lcm);
-    }
-    
-    /**
-     * @param a
-     * @param b
-     * @return greatest common denominator of a and b
-     */
-    private static long gcd(long a, long b) {
-        if(b == 0) return a;
-        return gcd(b, a % b);
+        System.out.println(AdventUtil.lcm(cycleLengths));
     }
     
     /**
