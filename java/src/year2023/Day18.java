@@ -11,7 +11,7 @@ import global.util.AdventUtil;
 import global.util.Coord2D;
 import global.util.CoordF2D;
 import global.util.CoordL2D;
-import global.util.Direction;
+import global.util.Direction2D;
 
 /**
  * Day 18
@@ -23,7 +23,7 @@ public class Day18 {
         part2(AdventUtil.inputList(f));
     }
     
-    private record Instruction(Direction dir, int dist) { }
+    private record Instruction(Direction2D dir, int dist) { }
     
     /**
      * Parse input
@@ -38,7 +38,7 @@ public class Day18 {
         
         // follow instructions to generate points
         CoordL2D pos = new CoordL2D(0, 0);
-        Direction prevDir = instructions.get(instructions.size() - 1).dir();
+        Direction2D prevDir = instructions.get(instructions.size() - 1).dir();
         
         List<CoordF2D> points = new ArrayList<>();
         
@@ -138,7 +138,7 @@ public class Day18 {
             minY = 0, maxY = 0,
             pairity = 0; // determined that both inputs are RHS interior at (1, 1)
         
-        Direction lastDirection = Direction.EAST; // both inputs start with R
+        Direction2D lastDirection = Direction2D.EAST; // both inputs start with R
         
         for(Instruction i : instructions) {
             // apply instruction
@@ -170,7 +170,7 @@ public class Day18 {
         x = 0 - minX;
         y = 0 - minY;
         for(Instruction i : instructions) {
-            if(i.dir() == Direction.NORTH || i.dir() == Direction.SOUTH) { 
+            if(i.dir() == Direction2D.NORTH || i.dir() == Direction2D.SOUTH) { 
                 int dy = i.dir().convertY(0, i.dist()),
                     dys = (dy > 0) ? 1 : -1;
                 
@@ -201,10 +201,10 @@ public class Day18 {
             if(grid[p.x()][p.y()]) continue;
             grid[p.x()][p.y()] = true;
             
-            toFillQueue.offer(Direction.NORTH.convert2D(p, 1));
-            toFillQueue.offer(Direction.SOUTH.convert2D(p, 1));
-            toFillQueue.offer(Direction.EAST.convert2D(p, 1));
-            toFillQueue.offer(Direction.WEST.convert2D(p, 1));
+            toFillQueue.offer(Direction2D.NORTH.convert2D(p, 1));
+            toFillQueue.offer(Direction2D.SOUTH.convert2D(p, 1));
+            toFillQueue.offer(Direction2D.EAST.convert2D(p, 1));
+            toFillQueue.offer(Direction2D.WEST.convert2D(p, 1));
         }
         
         // count filled area
@@ -238,10 +238,10 @@ public class Day18 {
             
             instructions.add(new Instruction(
                 switch(val & 0x0F) {
-                    case 1  -> Direction.SOUTH; // D
-                    case 2  -> Direction.WEST;  // L
-                    case 3  -> Direction.NORTH; // U
-                    default -> Direction.EAST; // R
+                    case 1  -> Direction2D.SOUTH; // D
+                    case 2  -> Direction2D.WEST;  // L
+                    case 3  -> Direction2D.NORTH; // U
+                    default -> Direction2D.EAST; // R
                 },
                 val >> 4
             ));
@@ -266,10 +266,10 @@ public class Day18 {
             
             instructions.add(new Instruction(
                 switch(sp[0]) {
-                    case "U"    -> Direction.NORTH;
-                    case "D"    -> Direction.SOUTH;
-                    case "L"    -> Direction.WEST;
-                    default     -> Direction.EAST; // "R"
+                    case "U"    -> Direction2D.NORTH;
+                    case "D"    -> Direction2D.SOUTH;
+                    case "L"    -> Direction2D.WEST;
+                    default     -> Direction2D.EAST; // "R"
                 },
                 Integer.parseInt(sp[1])
             ));

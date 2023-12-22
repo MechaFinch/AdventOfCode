@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import global.util.AdventUtil;
-import global.util.Direction;
+import global.util.Direction2D;
 import global.util.Pair;
 
 /**
@@ -37,7 +37,7 @@ public class Day16 {
     private static class Tile {
         public final Mirror contents;
         
-        private Map<Direction, Boolean> incoming,
+        private Map<Direction2D, Boolean> incoming,
                                         outgoing;
         
         private boolean hasLight;
@@ -49,15 +49,15 @@ public class Day16 {
             this.outgoing = new HashMap<>();
             this.hasLight = false;
             
-            this.incoming.put(Direction.NORTH, false);
-            this.incoming.put(Direction.SOUTH, false);
-            this.incoming.put(Direction.EAST, false);
-            this.incoming.put(Direction.WEST, false);
+            this.incoming.put(Direction2D.NORTH, false);
+            this.incoming.put(Direction2D.SOUTH, false);
+            this.incoming.put(Direction2D.EAST, false);
+            this.incoming.put(Direction2D.WEST, false);
             
-            this.outgoing.put(Direction.NORTH, false);
-            this.outgoing.put(Direction.SOUTH, false);
-            this.outgoing.put(Direction.EAST, false);
-            this.outgoing.put(Direction.WEST, false);
+            this.outgoing.put(Direction2D.NORTH, false);
+            this.outgoing.put(Direction2D.SOUTH, false);
+            this.outgoing.put(Direction2D.EAST, false);
+            this.outgoing.put(Direction2D.WEST, false);
         }
         
         public boolean hasLight() { return this.hasLight; }
@@ -70,8 +70,8 @@ public class Day16 {
          * @param d
          * @return
          */
-        public Pair<Direction, Direction> addIncoming(Direction d) {
-            Direction newDir1 = null,
+        public Pair<Direction2D, Direction2D> addIncoming(Direction2D d) {
+            Direction2D newDir1 = null,
                       newDir2 = null;
             
             this.hasLight = true;
@@ -83,15 +83,15 @@ public class Day16 {
             
             this.incoming.put(d, true);
             
-            Direction o1, o2;
+            Direction2D o1, o2;
             
             switch(this.contents) {
                 case UP:
                     o1 = switch(d) {
-                        case NORTH  -> Direction.EAST;
-                        case SOUTH  -> Direction.WEST;
-                        case EAST   -> Direction.NORTH;
-                        case WEST   -> Direction.SOUTH;
+                        case NORTH  -> Direction2D.EAST;
+                        case SOUTH  -> Direction2D.WEST;
+                        case EAST   -> Direction2D.NORTH;
+                        case WEST   -> Direction2D.SOUTH;
                     };
                     
                     if(!this.outgoing.get(o1)) newDir1 = o1;
@@ -100,10 +100,10 @@ public class Day16 {
                     
                 case DOWN:
                     o1 = switch(d) {
-                        case NORTH  -> Direction.WEST;
-                        case SOUTH  -> Direction.EAST;
-                        case EAST   -> Direction.SOUTH;
-                        case WEST   -> Direction.NORTH;
+                        case NORTH  -> Direction2D.WEST;
+                        case SOUTH  -> Direction2D.EAST;
+                        case EAST   -> Direction2D.SOUTH;
+                        case WEST   -> Direction2D.NORTH;
                     };
                     
                     if(!this.outgoing.get(o1)) newDir1 = o1;
@@ -112,17 +112,17 @@ public class Day16 {
                     
                 case VERTICAL:
                     o1 = switch(d) {
-                        case NORTH  -> Direction.NORTH;
-                        case SOUTH  -> Direction.SOUTH;
-                        case EAST   -> Direction.NORTH;
-                        case WEST   -> Direction.NORTH;
+                        case NORTH  -> Direction2D.NORTH;
+                        case SOUTH  -> Direction2D.SOUTH;
+                        case EAST   -> Direction2D.NORTH;
+                        case WEST   -> Direction2D.NORTH;
                     };
                     
                     o2 = switch(d) {
-                        case NORTH  -> Direction.NORTH;
-                        case SOUTH  -> Direction.SOUTH;
-                        case EAST   -> Direction.SOUTH;
-                        case WEST   -> Direction.SOUTH;
+                        case NORTH  -> Direction2D.NORTH;
+                        case SOUTH  -> Direction2D.SOUTH;
+                        case EAST   -> Direction2D.SOUTH;
+                        case WEST   -> Direction2D.SOUTH;
                     };
                     
                     if(!this.outgoing.get(o1)) newDir1 = o1;
@@ -133,17 +133,17 @@ public class Day16 {
                     
                 case HORIZONTAL:
                     o1 = switch(d) {
-                        case NORTH  -> Direction.EAST;
-                        case SOUTH  -> Direction.EAST;
-                        case EAST   -> Direction.EAST;
-                        case WEST   -> Direction.WEST;
+                        case NORTH  -> Direction2D.EAST;
+                        case SOUTH  -> Direction2D.EAST;
+                        case EAST   -> Direction2D.EAST;
+                        case WEST   -> Direction2D.WEST;
                     };
                     
                     o2 = switch(d) {
-                        case NORTH  -> Direction.WEST;
-                        case SOUTH  -> Direction.WEST;
-                        case EAST   -> Direction.EAST;
-                        case WEST   -> Direction.WEST;
+                        case NORTH  -> Direction2D.WEST;
+                        case SOUTH  -> Direction2D.WEST;
+                        case EAST   -> Direction2D.EAST;
+                        case WEST   -> Direction2D.WEST;
                     };
                     
                     if(!this.outgoing.get(o1)) newDir1 = o1;
@@ -188,23 +188,23 @@ public class Day16 {
         }
         
         // generate starting coords & directions
-        List<Pair<Pair<Integer, Integer>, Direction>> startingConditions = new ArrayList<>();
+        List<Pair<Pair<Integer, Integer>, Direction2D>> startingConditions = new ArrayList<>();
         
         // top & bottom
         for(int x = 0; x < grid.length; x++) {
-            startingConditions.add(new Pair<>(new Pair<>(x, 0), Direction.SOUTH));
-            startingConditions.add(new Pair<>(new Pair<>(x, grid[0].length - 1), Direction.NORTH));
+            startingConditions.add(new Pair<>(new Pair<>(x, 0), Direction2D.SOUTH));
+            startingConditions.add(new Pair<>(new Pair<>(x, grid[0].length - 1), Direction2D.NORTH));
         }
         
         // left & right
         for(int y = 0; y < grid[0].length; y++) {
-            startingConditions.add(new Pair<>(new Pair<>(0, y), Direction.EAST));
-            startingConditions.add(new Pair<>(new Pair<>(grid.length - 1, y), Direction.WEST));
+            startingConditions.add(new Pair<>(new Pair<>(0, y), Direction2D.EAST));
+            startingConditions.add(new Pair<>(new Pair<>(grid.length - 1, y), Direction2D.WEST));
         }
         
         // for each starting condition
         long max = 0;
-        for(Pair<Pair<Integer, Integer>, Direction> scon : startingConditions) {
+        for(Pair<Pair<Integer, Integer>, Direction2D> scon : startingConditions) {
             // run light stuff
             stepLight(grid, scon.a().a(), scon.a().b(), scon.b());
             
@@ -272,7 +272,7 @@ public class Day16 {
         */
         
         // run light stuff
-        stepLight(grid, 0, 0, Direction.EAST);
+        stepLight(grid, 0, 0, Direction2D.EAST);
         
         // count energized
         long sum = 0;
@@ -303,16 +303,16 @@ public class Day16 {
      * @param y
      * @param d
      */
-    private static void stepLight(Tile[][] grid, int x, int y, Direction d) {
+    private static void stepLight(Tile[][] grid, int x, int y, Direction2D d) {
         while(true) {
             // check bounds
             if(x < 0 || x >= grid.length || y < 0 || y >= grid[0].length) return;
             
             // apply tile action
             //System.out.println("(" + x + ", " + y + ") " + d + " " + grid[x][y].contents);
-            Pair<Direction, Direction> newOutgoing = grid[x][y].addIncoming(d);
+            Pair<Direction2D, Direction2D> newOutgoing = grid[x][y].addIncoming(d);
             
-            Direction d1 = newOutgoing.a(),
+            Direction2D d1 = newOutgoing.a(),
                       d2 = newOutgoing.b();
             
             if(d1 != null && d2 != null) {

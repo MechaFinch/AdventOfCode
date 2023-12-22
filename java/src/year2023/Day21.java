@@ -13,7 +13,7 @@ import java.util.Set;
 
 import global.util.AdventUtil;
 import global.util.Coord2D;
-import global.util.Direction;
+import global.util.Direction2D;
 import global.util.Pair;
 
 /**
@@ -42,7 +42,7 @@ public class Day21 {
      * @param entrancePos Coords of said entrance
      * @param length Number of steps needed in this map
      */
-    private record EdgeWalk(Direction entraceDir, Coord2D entrancePos, int length) { }
+    private record EdgeWalk(Direction2D entraceDir, Coord2D entrancePos, int length) { }
     
     /**
      * State
@@ -52,7 +52,7 @@ public class Day21 {
      * @param entranceDir Side being entered from
      * @param stepsLeft Remaining steps
      */
-    private record MapState(Coord2D mapCoord, Coord2D entranceCoord, Direction entranceDir, int stepsLeft) { }
+    private record MapState(Coord2D mapCoord, Coord2D entranceCoord, Direction2D entranceDir, int stepsLeft) { }
     
     /**
      * Parse to grid
@@ -178,7 +178,7 @@ public class Day21 {
      * @param height
      * @return
      */
-    private static MapData exploreMid(boolean[][] rocks, Coord2D start, Direction entrance, int steps, int width, int height) {
+    private static MapData exploreMid(boolean[][] rocks, Coord2D start, Direction2D entrance, int steps, int width, int height) {
         boolean[][] visited = new boolean[width][height];
         
         // walk
@@ -206,10 +206,10 @@ public class Day21 {
             if(stepsLeft < 0) continue;
             
             // enqueue neighbors
-            Coord2D n = Direction.NORTH.convert2D(coord, 1),
-                    s = Direction.SOUTH.convert2D(coord, 1),
-                    e = Direction.EAST.convert2D(coord, 1),
-                    w = Direction.WEST.convert2D(coord, 1);
+            Coord2D n = Direction2D.NORTH.convert2D(coord, 1),
+                    s = Direction2D.SOUTH.convert2D(coord, 1),
+                    e = Direction2D.EAST.convert2D(coord, 1),
+                    w = Direction2D.WEST.convert2D(coord, 1);
             
             if(n.checkBounds(width, height) && !visited[n.x()][n.y()] && !rocks[n.x()][n.y()]) tileQueue.offer(new Pair<>(n, stepsLeft));
             if(s.checkBounds(width, height) && !visited[s.x()][s.y()] && !rocks[s.x()][s.y()]) tileQueue.offer(new Pair<>(s, stepsLeft));
@@ -258,10 +258,10 @@ public class Day21 {
             if(stepsLeft < 0) continue;
             
             // enqueue neighbors
-            Coord2D n = Direction.NORTH.convert2D(coord, 1),
-                    s = Direction.SOUTH.convert2D(coord, 1),
-                    e = Direction.EAST.convert2D(coord, 1),
-                    w = Direction.WEST.convert2D(coord, 1);
+            Coord2D n = Direction2D.NORTH.convert2D(coord, 1),
+                    s = Direction2D.SOUTH.convert2D(coord, 1),
+                    e = Direction2D.EAST.convert2D(coord, 1),
+                    w = Direction2D.WEST.convert2D(coord, 1);
             
             if(n.checkBounds(width, height) && !visited[n.x()][n.y()] && !rocks[n.x()][n.y()]) tileQueue.offer(new Pair<>(n, stepsLeft));
             if(s.checkBounds(width, height) && !visited[s.x()][s.y()] && !rocks[s.x()][s.y()]) tileQueue.offer(new Pair<>(s, stepsLeft));

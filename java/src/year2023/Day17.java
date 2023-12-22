@@ -13,7 +13,7 @@ import java.util.Set;
 
 import global.util.AdventUtil;
 import global.util.Coord2D;
-import global.util.Direction;
+import global.util.Direction2D;
 import global.util.Pair;
 
 /**
@@ -26,7 +26,7 @@ public class Day17 {
         part1(AdventUtil.inputList(f));
     }
     
-    private record SearchPoint(int x, int y, Direction d, int a) {
+    private record SearchPoint(int x, int y, Direction2D d, int a) {
         public List<SearchPoint> neighbors(int width, int height, int minDist, int maxDist) {
             List<SearchPoint> ns = new ArrayList<>();
             
@@ -34,14 +34,14 @@ public class Day17 {
                 switch(this.d) {
                     case NORTH:
                     case SOUTH:
-                        if(this.x + offs < width) ns.add(new SearchPoint(this.x + offs, this.y, Direction.EAST, offs));
-                        if(this.x - offs >= 0) ns.add(new SearchPoint(this.x - offs, this.y, Direction.WEST, offs));
+                        if(this.x + offs < width) ns.add(new SearchPoint(this.x + offs, this.y, Direction2D.EAST, offs));
+                        if(this.x - offs >= 0) ns.add(new SearchPoint(this.x - offs, this.y, Direction2D.WEST, offs));
                         break;
                         
                     case EAST:
                     case WEST:
-                        if(this.y - offs >= 0) ns.add(new SearchPoint(this.x, this.y - offs, Direction.NORTH, offs));
-                        if(this.y + offs < height) ns.add(new SearchPoint(this.x, this.y + offs, Direction.SOUTH, offs));
+                        if(this.y - offs >= 0) ns.add(new SearchPoint(this.x, this.y - offs, Direction2D.NORTH, offs));
+                        if(this.y + offs < height) ns.add(new SearchPoint(this.x, this.y + offs, Direction2D.SOUTH, offs));
                         break;
                 }
             }
@@ -84,7 +84,7 @@ public class Day17 {
         Map<SearchPoint, Integer> gScore = new HashMap<>(),
                                   fScore = new HashMap<>();
         
-        SearchPoint start = new SearchPoint(0, 0, Direction.NORTH, 0),
+        SearchPoint start = new SearchPoint(0, 0, Direction2D.NORTH, 0),
                     end = null;
         
         openSet.add(start);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import global.util.AdventUtil;
-import global.util.Direction;
+import global.util.Direction2D;
 
 /**
  * Day 14
@@ -110,10 +110,10 @@ public class Day14 {
         
         for(int i = 0; i < 1_000_000_000; i++) {
             
-            tilt(rocks, Direction.NORTH);
-            tilt(rocks, Direction.WEST);
-            tilt(rocks, Direction.SOUTH);
-            tilt(rocks, Direction.EAST);
+            tilt(rocks, Direction2D.NORTH);
+            tilt(rocks, Direction2D.WEST);
+            tilt(rocks, Direction2D.SOUTH);
+            tilt(rocks, Direction2D.EAST);
             
             //printRocks(rocks, width, height);
             
@@ -128,10 +128,10 @@ public class Day14 {
                 System.out.println("Cycle length: " + cycleLength + ", spins left: " + remSpins);
                 
                 for(int j = 0; j < remSpins; j++) {
-                    tilt(rocks, Direction.NORTH);
-                    tilt(rocks, Direction.WEST);
-                    tilt(rocks, Direction.SOUTH);
-                    tilt(rocks, Direction.EAST);
+                    tilt(rocks, Direction2D.NORTH);
+                    tilt(rocks, Direction2D.WEST);
+                    tilt(rocks, Direction2D.SOUTH);
+                    tilt(rocks, Direction2D.EAST);
                 }
                 
                 //printRocks(rocks, width, height);
@@ -142,7 +142,7 @@ public class Day14 {
             dynamicProgramming.put(rs, i);
         }
         
-        System.out.println(computeLoad(rocks, Direction.NORTH));
+        System.out.println(computeLoad(rocks, Direction2D.NORTH));
     }
     
     /**
@@ -167,9 +167,9 @@ public class Day14 {
             }
         }
         
-        tilt(rocks, Direction.NORTH);
+        tilt(rocks, Direction2D.NORTH);
         
-        System.out.println(computeLoad(rocks, Direction.NORTH));
+        System.out.println(computeLoad(rocks, Direction2D.NORTH));
     }
     
     private static void printRocks(Rock[][] rocks, int width, int height) {
@@ -200,7 +200,7 @@ public class Day14 {
      * @param rocks
      * @param d
      */
-    private static long computeLoad(Rock[][] rocks, Direction d) {
+    private static long computeLoad(Rock[][] rocks, Direction2D d) {
         final int width = rocks.length,
                   height = rocks[0].length;
         
@@ -229,7 +229,7 @@ public class Day14 {
      * @param rocks
      * @param d
      */
-    private static void tilt(Rock[][] rocks, Direction d) {
+    private static void tilt(Rock[][] rocks, Direction2D d) {
         final int width = rocks.length,
                   height = rocks[0].length;
         

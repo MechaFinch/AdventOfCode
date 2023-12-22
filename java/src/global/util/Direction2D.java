@@ -3,7 +3,7 @@ package global.util;
 /**
  * An enum for directions. Can increment x/y.
  */
-public enum Direction {
+public enum Direction2D {
     NORTH,
     SOUTH,
     EAST,
@@ -12,7 +12,7 @@ public enum Direction {
     /**
      * @return The opposite Direction
      */
-    public Direction opposite() {
+    public Direction2D opposite() {
         return switch(this) {
             case NORTH -> SOUTH;
             case SOUTH -> NORTH;
@@ -29,7 +29,7 @@ public enum Direction {
      * @param d
      * @return
      */
-    public int pairity(Direction d) {
+    public int pairity(Direction2D d) {
         return switch(d) {
             case NORTH  -> switch(this) {
                 case NORTH  -> 0;   // no change

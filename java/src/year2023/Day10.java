@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import global.util.AdventUtil;
-import global.util.Direction;
+import global.util.Direction2D;
 import global.util.Pair;
 
 /**
@@ -81,11 +81,11 @@ public class Day10 {
         // navigate to find a loop
         int insideCount = 0;
         
-        Direction[] directions = new Direction[] {
-            Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
+        Direction2D[] directions = new Direction2D[] {
+            Direction2D.NORTH, Direction2D.SOUTH, Direction2D.EAST, Direction2D.WEST
         };
         
-        for(Direction d : directions) {
+        for(Direction2D d : directions) {
             Pair<Integer, Pair<Integer, Enclosure[][]>> loopData = checkLoop(grid, sx, sy, d); 
             int pathLength = loopData.a();
             
@@ -99,7 +99,7 @@ public class Day10 {
                 
                 Enclosure[][] enc = loopData.b().b();
                 
-                Direction dir = d;
+                Direction2D dir = d;
                 
                 // starting outgoing
                 switch(dir) {
@@ -120,7 +120,7 @@ public class Day10 {
                     // pipes labeled by outgoing
                     switch(p) {
                         case VERTICAL:
-                            if(dir == Direction.NORTH) { 
+                            if(dir == Direction2D.NORTH) { 
                                 flood(enc, x + pairity, y);
                             } else { // south
                                 flood(enc, x - pairity, y);
@@ -128,7 +128,7 @@ public class Day10 {
                             break;
                         
                         case HORIZONTAL:
-                            if(dir == Direction.EAST) {
+                            if(dir == Direction2D.EAST) {
                                 flood(enc, x, y + pairity);
                             } else { // west
                                 flood(enc, x, y - pairity);
@@ -136,58 +136,58 @@ public class Day10 {
                             break;
                             
                         case NORTH_EAST:
-                            if(dir == Direction.SOUTH) {
+                            if(dir == Direction2D.SOUTH) {
                                 // south -> east
                                 flood(enc, x - pairity, y);
                                 flood(enc, x, y + pairity);
-                                dir = Direction.EAST;
+                                dir = Direction2D.EAST;
                             } else {
                                 // west -> north
                                 flood(enc, x, y - pairity);
                                 flood(enc, x + pairity, y);
-                                dir = Direction.NORTH;
+                                dir = Direction2D.NORTH;
                             }
                             break;
                             
                         case NORTH_WEST:
-                            if(dir == Direction.SOUTH) {
+                            if(dir == Direction2D.SOUTH) {
                                 // south -> west
                                 flood(enc, x - pairity, y);
                                 flood(enc, x, y - pairity);
-                                dir = Direction.WEST;
+                                dir = Direction2D.WEST;
                             } else {
                                 // east -> north
                                 flood(enc, x, y + pairity);
                                 flood(enc, x + pairity, y);
-                                dir = Direction.NORTH;
+                                dir = Direction2D.NORTH;
                             }
                             break;
                             
                         case SOUTH_EAST:
-                            if(dir == Direction.NORTH) {
+                            if(dir == Direction2D.NORTH) {
                                 // north -> east
                                 flood(enc, x + pairity, y);
                                 flood(enc, x, y + pairity);
-                                dir = Direction.EAST;
+                                dir = Direction2D.EAST;
                             } else {
                                 // west -> south
                                 flood(enc, x, y - pairity);
                                 flood(enc, x - pairity, y);
-                                dir = Direction.SOUTH;
+                                dir = Direction2D.SOUTH;
                             }
                             break;
                             
                         case SOUTH_WEST:
-                            if(dir == Direction.NORTH) {
+                            if(dir == Direction2D.NORTH) {
                                 // north -> west
                                 flood(enc, x + pairity, y);
                                 flood(enc, x, y - pairity);
-                                dir = Direction.WEST;
+                                dir = Direction2D.WEST;
                             } else {
                                 // east -> south
                                 flood(enc, x, y + pairity);
                                 flood(enc, x - pairity, y);
-                                dir = Direction.SOUTH;
+                                dir = Direction2D.SOUTH;
                             }
                             break;
                         
@@ -231,11 +231,11 @@ public class Day10 {
         
         grid[sx][sy] = Enclosure.INSIDE;
         
-        Direction[] directions = new Direction[] {
-            Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
+        Direction2D[] directions = new Direction2D[] {
+            Direction2D.NORTH, Direction2D.SOUTH, Direction2D.EAST, Direction2D.WEST
         };
         
-        for(Direction d : directions) {
+        for(Direction2D d : directions) {
             flood(grid, d.convertX(sx, 1), d.convertY(sy, 1));
         }
     }
@@ -278,11 +278,11 @@ public class Day10 {
         // navigate to find a loop
         int pathLength = -1;
         
-        Direction[] directions = new Direction[] {
-            Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
+        Direction2D[] directions = new Direction2D[] {
+            Direction2D.NORTH, Direction2D.SOUTH, Direction2D.EAST, Direction2D.WEST
         };
         
-        for(Direction d : directions) {
+        for(Direction2D d : directions) {
             pathLength = checkLoop(grid, sx, sy, d).a();
             
             if(pathLength != -1) break;
@@ -303,10 +303,10 @@ public class Day10 {
      * @param startDirection
      * @return Pair of {path length, {path parity, path-only grid}}
      */
-    private static Pair<Integer, Pair<Integer, Enclosure[][]>> checkLoop(Pipe[][] grid, int sx, int sy, Direction startDirection) {
+    private static Pair<Integer, Pair<Integer, Enclosure[][]>> checkLoop(Pipe[][] grid, int sx, int sy, Direction2D startDirection) {
         Enclosure[][] eGrid = new Enclosure[grid.length][grid[0].length];
         
-        Direction dir = startDirection;
+        Direction2D dir = startDirection;
         
         System.out.println("Checking " + dir);
         
@@ -350,62 +350,62 @@ public class Day10 {
             switch(p) {
                 case VERTICAL:
                     // no change
-                    if(dir == Direction.NORTH || dir == Direction.SOUTH) continue;
+                    if(dir == Direction2D.NORTH || dir == Direction2D.SOUTH) continue;
                     break;
                 
                 case HORIZONTAL:
                     // no change
-                    if(dir == Direction.EAST || dir == Direction.WEST) continue;
+                    if(dir == Direction2D.EAST || dir == Direction2D.WEST) continue;
                     break;
                 
                 case NORTH_EAST:
                     // turn
-                    if(dir == Direction.SOUTH) { 
+                    if(dir == Direction2D.SOUTH) { 
                         pairity--; // left
-                        dir = Direction.EAST;
+                        dir = Direction2D.EAST;
                         continue;
-                    } else if(dir == Direction.WEST) {
+                    } else if(dir == Direction2D.WEST) {
                         pairity++; // right
-                        dir = Direction.NORTH;
+                        dir = Direction2D.NORTH;
                         continue;
                     }
                     break;
                 
                 case NORTH_WEST:
                     // turn
-                    if(dir == Direction.SOUTH) { 
+                    if(dir == Direction2D.SOUTH) { 
                         pairity++; // right
-                        dir = Direction.WEST;
+                        dir = Direction2D.WEST;
                         continue;
-                    } else if(dir == Direction.EAST) {
+                    } else if(dir == Direction2D.EAST) {
                         pairity--; // left
-                        dir = Direction.NORTH;
+                        dir = Direction2D.NORTH;
                         continue;
                     }
                     break;
                 
                 case SOUTH_WEST:
                     // turn
-                    if(dir == Direction.NORTH) { 
+                    if(dir == Direction2D.NORTH) { 
                         pairity--; // left
-                        dir = Direction.WEST;
+                        dir = Direction2D.WEST;
                         continue;
-                    } else if(dir == Direction.EAST) {
+                    } else if(dir == Direction2D.EAST) {
                         pairity++; // right
-                        dir = Direction.SOUTH;
+                        dir = Direction2D.SOUTH;
                         continue;
                     }
                     break;
                 
                 case SOUTH_EAST:
                     // turn
-                    if(dir == Direction.NORTH) { 
+                    if(dir == Direction2D.NORTH) { 
                         pairity++; // right
-                        dir = Direction.EAST;
+                        dir = Direction2D.EAST;
                         continue;
-                    } else if(dir == Direction.WEST) {
+                    } else if(dir == Direction2D.WEST) {
                         pairity--; // left
-                        dir = Direction.SOUTH;
+                        dir = Direction2D.SOUTH;
                         continue;
                     }
                     break;
