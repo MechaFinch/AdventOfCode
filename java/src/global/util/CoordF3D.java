@@ -11,4 +11,30 @@ public record CoordF3D(double x, double y, double z) {
     public boolean checkBounds(double w, double h, double d) {
         return this.x >= 0 && this.x < w && this.y >= 0 && this.y < h && this.z >= 0 && this.z < d;
     }
+    
+    /**
+     * @param other
+     * @param multiplier
+     * @return this + (other * multiplier)
+     */
+    public CoordF3D add(CoordF3D other, double multiplier) {
+        return new CoordF3D(
+            this.x + (multiplier * other.x),
+            this.y + (multiplier * other.y),
+            this.z + (multiplier * other.z)
+        );
+    }
+    
+    /**
+     * @param other
+     * @param multiplier
+     * @return this - (other * multiplier)
+     */
+    public CoordF3D subtract(CoordF3D other, double multiplier) {
+        return new CoordF3D(
+            this.x - (multiplier * other.x),
+            this.y - (multiplier * other.y),
+            this.z - (multiplier * other.z)
+        );
+    }
 }

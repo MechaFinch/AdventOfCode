@@ -10,4 +10,28 @@ public record Coord2D(int x, int y) {
     public boolean checkBounds(int w, int h) {
         return this.x >= 0 && this.x < w && this.y >= 0 && this.y < h;
     }
+    
+    /**
+     * @param other
+     * @param multiplier
+     * @return this + (other * multiplier)
+     */
+    public Coord2D add(Coord2D other, int multiplier) {
+        return new Coord2D(
+            this.x + (multiplier * other.x),
+            this.y + (multiplier * other.y)
+        );
+    }
+    
+    /**
+     * @param other
+     * @param multiplier
+     * @return this - (other * multiplier)
+     */
+    public Coord2D subtract(Coord2D other, int multiplier) {
+        return new Coord2D(
+            this.x - (multiplier * other.x),
+            this.y - (multiplier * other.y)
+        );
+    }
 }
