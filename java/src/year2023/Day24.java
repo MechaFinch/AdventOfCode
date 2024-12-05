@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import global.util.AdventUtil;
-import global.util.Coord3D;
 import global.util.CoordF3D;
 import global.util.CoordL3D;
 
@@ -56,149 +58,176 @@ public class Day24 {
         }
     }
     
+    static class Part2Thread extends Thread {
+        
+        static boolean solutionFound = false;
+        
+        private List<Line> lines;
+        private Line lnA, lnB;
+        
+        private int start, size, step;
+        
+        Part2Thread(int start, int size, int step, List<Line> lines, Line lnA, Line lnB) {
+            this.start = start;
+            this.size = size;
+            this.step = step;
+            this.lines = lines;
+            this.lnA = lnA;
+            this.lnB = lnB;
+        }
+        
+        @Override
+        public void run() {
+            for(int tMin = start; !solutionFound; tMin += step) {
+                for(int tMax = tMin; tMax < tMin + size; tMax++) {
+                    if(tMax % 1000 == 0) {
+                        System.out.println("Searching max=" + tMax);
+                    }
+                    
+                    // Search with collision time of lna = tMax
+                    for(int tb = 1; tb < tMax; tb++) {
+                        if(tryTrajectory(lines, lnB, lnA, tb, tMax)) {
+                            solutionFound = true;
+                            return;
+                        }
+                    }
+                    
+                    // Search with collision time of lnb = tMax
+                    for(int ta = 1; ta < tMax; ta++) {
+                        if(tryTrajectory(lines, lnA, lnB, ta, tMax)) {
+                            solutionFound = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /**
-     * CURRENTLY DOES NOT WORK
-     * coming back to this later
-     * 
      * @param inLines
      */
     private static void part2(List<String> inLines) {
-        List<Line> lines = parse(inLines, true, null, null);
-        int numStones = lines.size(),
-            timeMax = 10;
-        
-        List<CoordL3D> vels = new ArrayList<>(numStones);
-        
-        for(Line l : lines) vels.add(l.b());
-        
-        // for each time of first hit
-        for(int startTime = 1; startTime < 2; startTime++) {
-            // initialize position list
-            List<CoordL3D> pos = new ArrayList<>(numStones);
-            
-            for(int i = 0; i < numStones; i++) {
-                pos.add(lines.get(i).a().add(vels.get(i), startTime));
-            }
-            
-            // For each pair of hailstones
-            for(int i = 0; i < numStones; i++) {
-                for(int j = 0; j < numStones; j++) {
-                    if(j == i) continue;
-                    
-                    CoordL3D vel = tryCombo(pos, vels, i, j, timeMax);
-                    
-                    if(vel != null) {
-                        // found a working velocity
-                        CoordL3D startPos = pos.get(i).add(vel, -startTime);
-                        
-                        System.out.println(startPos.x() + startPos.y() + startPos.z());
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Attempts a line based on first two hits
-     * For each delta from 1 to timeMax, find the stone velocity based on the two hits
-     * If all stones can be hit with the given configuration, return velocity
-     * If not, return null
-     * 
-     * @return
-     */
-    private static CoordL3D tryCombo(List<CoordL3D> ipos, List<CoordL3D> ivels, int firstIndex, int secondIndex, int timeMax) {
-        // local modifyable copy
-        List<CoordL3D> pos = new ArrayList<>(),
-                       vels = new ArrayList<>();
-        
-        pos.addAll(ipos);
-        vels.addAll(ivels);
-        
-        CoordL3D rockStart = pos.get(firstIndex);
-        
-        // walk through first hit time
-        outer:
-        for(long t = 1; t <= timeMax; t++) {
-            step(pos, vels, 1);
-            
-            CoordL3D rockVelRaw = pos.get(secondIndex).subtract(rockStart, 1);
-            
-            // is this an integer velocity
-            if(rockVelRaw.x() % t == 0 &&
-               rockVelRaw.y() % t == 0 &&
-               rockVelRaw.z() % t == 0) {
-                
-                // yes
-                CoordL3D rockVel = new CoordL3D(
-                    rockVelRaw.x() / t,
-                    rockVelRaw.y() / t,
-                    rockVelRaw.z() / t
-                );
-                
-                // for each other rock
-                for(int i = 0; i < pos.size(); i++) {
-                    if(i == firstIndex || i == secondIndex) continue;
-                    
-                    long hitTime = hitTime(rockStart, rockVel, pos.get(i), vels.get(i));
-                    
-                    //System.out.println(hitTime);
-                    
-                    if(hitTime <= 0) {
-                        // can't hit
-                        continue outer;
-                    }
-                }
-                
-                // if we're here, all rocks have been hit.
-                return rockVel;
-            }
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Computes at what time the rock and hailstone collide
-     * @param rock
-     * @param rockVel
-     * @param target
-     * @param targetVel
-     * @return Time to collision, or -1.
-     */
-    private static long hitTime(CoordL3D rock, CoordL3D rockVel, CoordL3D target, CoordL3D targetVel) {
         /*
-         * If the two collide, this must be true:
-         * rp + (rv * t) = tp + (tv * t)
-         * rp - tp = t(tv - rv)
-         * t = (rp - tp) / (tv - rv)
+         * If every rock must be hit, we can construct our trajectory from any pair of rocks
+         * Choosing two rocks, we can search through the hit time of each rock
          */
-        // avoid div by zero
-        if(targetVel.x() == rockVel.x()) return -1;
+        List<Line> lines = parse(inLines, true, null, null);
+        Line lnA = lines.get(0), lnB = lines.get(1);
         
-        // compute candidate time
-        double t = ((double)rock.x() - (double)target.x()) / ((double)targetVel.x() - (double)rockVel.x());
-        long lt = (long) t;
+        List<Thread> threads = new ArrayList<>();
         
-        if(Math.abs(t % 1) == 0 && rock.add(rockVel, lt).equals(target.add(targetVel, lt))) {
-            System.out.println("SLDJDLKGJDF");
-            return lt;
-        } else {
-            return -1;
+        int start = 550000;
+        int size = 10000;
+        int count = 4;
+        
+        for(int i = 0; i < count; i++) {
+            threads.add(new Part2Thread(start + (i * size), size, size * count, lines, lnA, lnB));
+            threads.get(i).start();
+        }
+        
+        for(int i = 0; i < count; i++) {
+            try {
+                threads.get(i).join();
+            } catch(InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
     
     /**
-     * Steps a list of hailstones
-     * 
-     * @param hailPosList
-     * @param velocityList
-     * @param stepSize
+     * Try a trajectory defined by the collision with lnA and lnB given ta < tb
+     * @param lines
+     * @param ta
+     * @param tb
+     * @return true if successful
      */
-    private static void step(List<CoordL3D> hailPosList, List<CoordL3D> velocityList, long stepSize) {
-        for(int i = 0; i < hailPosList.size(); i++) {
-            hailPosList.set(i, hailPosList.get(i).add(velocityList.get(i), stepSize));
+    private static boolean tryTrajectory(List<Line> lines, Line lnA, Line lnB, int ta, int tb) {
+        
+        // Determine velocity
+        CoordL3D posA = lnA.a().add(lnA.b(), ta);
+        CoordL3D posB = lnB.a().add(lnB.b(), tb);
+        CoordL3D velRaw = posB.subtract(posA, 1);
+        
+        int deltaT = tb - ta;
+        
+        // Valid velocities are integers
+        if((velRaw.x() % deltaT != 0) ||
+           (velRaw.y() % deltaT != 0) ||
+           (velRaw.z() % deltaT != 0)) {
+            return false;
         }
+        
+        CoordL3D rockVel = new CoordL3D(
+            velRaw.x() / deltaT,
+            velRaw.y() / deltaT,
+            velRaw.z() / deltaT
+        );
+        
+        CoordL3D rockOrigin = posA.add(rockVel, -ta);
+        
+        //System.out.print(rockOrigin + " @ " + rockVel + " ");
+        
+        /*
+         * rockOrigin[x] + rockVel[x]*t = hailOrigin[x] + hailVel[x]*t
+         * rockOrigin[y] + rockVel[y]*t = hailOrigin[y] + hailVel[y]*t
+         * rockOrigin[z] + rockVel[z]*t = hailOrigin[z] + hailVel[z]*t
+         * 
+         * (rockVel[x] - hailVel[x])*t = hailOrigin[x] - rockOrigin[x]
+         * (rockVel[y] - hailVel[y])*t = hailOrigin[y] - rockOrigin[y]
+         * (rockVel[z] - hailVel[z])*t = hailOrigin[z] - rockOrigin[z]
+         */
+        
+        // Determine if all are hit
+        for(Line ln : lines) {
+            CoordL3D hailOrigin = ln.a();
+            CoordL3D hailVel = ln.b();
+            
+            long velDiffX = rockVel.x() - hailVel.x();
+            
+            if(velDiffX == 0) {
+                // parallel
+                //System.out.println(" failed: parallel in x with " + ln.a());
+                return false;
+            }
+            
+            long dx = hailOrigin.x() - rockOrigin.x();
+            
+            if(dx % velDiffX != 0) {
+                return false;
+            }
+            
+            long t = dx / velDiffX;
+            
+            long rx = rockOrigin.x() + (t * rockVel.x());
+            long hx = hailOrigin.x() + (t * hailVel.x());
+            
+            if(rx != hx) {
+                //System.out.println(" failed: x " + rx + " != " + hx + " for " + ln.a() + " at " + t);
+                return false;
+            }
+            
+            long ry = rockOrigin.y() + (t * rockVel.y());
+            long hy = hailOrigin.y() + (t * hailVel.y());
+            
+            if(ry != hy) {
+                //System.out.println(" failed: y " + ry + " != " + hy + " for " + ln.a() + " at " + t);
+                return false;
+            }
+            
+            long rz = rockOrigin.z() + (t * rockVel.z());
+            long hz = hailOrigin.z() + (t * hailVel.z());
+            
+            if(rz != hz) {
+                //System.out.println(" failed: z " + rz + " != " + hz + " for " + ln.a() + " at " + t);
+                return false;
+            }
+        }
+        
+        // If we make it here, yay
+        System.out.println("Found solution " + (rockOrigin.x() + rockOrigin.y() + rockOrigin.z()));
+        return true;
     }
     
     /**
