@@ -22,6 +22,30 @@ public enum Direction2D {
     }
     
     /**
+     * @return Direction from turning left
+     */
+    public Direction2D left() {
+        return switch(this) {
+            case NORTH  -> WEST;
+            case SOUTH  -> EAST;
+            case EAST   -> NORTH;
+            case WEST   -> SOUTH;
+        };
+    }
+    
+    /**
+     * @return Direction from turning right
+     */
+    public Direction2D right() {
+        return switch(this) {
+            case NORTH  -> EAST;
+            case SOUTH  -> WEST;
+            case EAST   -> SOUTH;
+            case WEST   -> NORTH;
+        };
+    }
+    
+    /**
      * Returns the change in pairity when turning from d to this direction.
      * When a walk around a well-formed loop is completed, pairity will be positive if the enclosed
      * space is on the right hand side, and negative if the enclosed space is on the left hand side

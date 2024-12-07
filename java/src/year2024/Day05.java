@@ -51,6 +51,7 @@ public class Day05 {
             
             boolean valid = true;
             
+            // Check validity
             out:
             for(int i : update) {
                 Set<Integer> notBefore = notBeforeMap.get(i);
@@ -68,11 +69,13 @@ public class Day05 {
             }
             
             if(valid) {
+                // Sum for part 1
                 sum1 += update.get(update.size() / 2);
             } else {
                 // make modifiable
                 update = new ArrayList<>(update);
                 
+                // Fix order for part 2
                 Collections.sort(update, (a, b) -> {
                     if(notBeforeMap.containsKey(a)) {
                         // a must be before anything here
