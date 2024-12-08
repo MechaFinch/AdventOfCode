@@ -68,7 +68,7 @@ public class AdventUtil {
      * @param b
      * @return greatest common denominator of a and b
      */
-    private static long gcd(long a, long b) {
+    public static long gcd(long a, long b) {
         if(b == 0) return a;
         return gcd(b, a % b);
     }
